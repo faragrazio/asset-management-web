@@ -1,0 +1,14 @@
+<div class="home">
+  <h1>Benvenuto, {{ user()?.fullName }}</h1>
+  <p>Ruolo: {{ user()?.role }}</p>
+
+  @if (assetCount() !== null) {
+    <p>Chiamata protetta riuscita — asset trovati: {{ assetCount() }}</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else {
+    <p>Caricamento...</p>
+  }
+
+  <button (click)="logout()">Logout</button>
+</div>
