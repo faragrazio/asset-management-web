@@ -26,24 +26,28 @@ export class AssetEdit implements OnInit {
     location: [''],
   });
 
-  readonly error = signal<string | null>(null);
+readonly error = signal<string | null>(null);
+readonly isLoading = signal(true);     // parte true: in ngOnInit carico subito
+readonly skeletonFields = [0, 1, 2];   // 3 campi: Nome, Categoria, Posizione
 
-  ngOnInit(): void {
-    // paramMap.get('id') torna una stringa (o null): la converto in numero.
-    this.assetId = Number(this.route.snapshot.paramMap.get('id'));
+ngOnInit(): void {
+  this.assetId = Number(this.route.snapshot.paramMap.get('id'));
 
-    // Carico l'asset esistente e riempio il form con i suoi valori.
-    this.assetService.getById(this.assetId).subscribe({
-      next: (asset) => {
-        this.form.patchValue({
-          name: asset.name,
-          category: asset.category,
-          location: asset.location,
-        });
-      },
-      error: () => this.error.set('Impossibile caricare l\'asset.'),
-    });
-  }
+  this.assetService.getById(this.assetId).subscribe({
+    next: (asset) => {
+      this.form.patchValue({
+        name: asset.name,
+        category: asset.category,
+        location: asset.location,
+      });
+      this.isLoading.set(false);   // dati arrivati → mostro il form vero
+    },
+    error: () => {
+      this.error.set('Impossibile caricare l\'asset.');
+      this.isLoading.set(false);   // anche in errore esco dal caricamento
+    },
+  });
+}
 
   onSubmit(): void {
     // Ricostruisco l'oggetto UpdateAssetRequest: id (dall'URL) + i 3 campi del form.
