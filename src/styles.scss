@@ -165,15 +165,9 @@ button.danger { background: var(--color-danger); }
 button.danger:hover { background: var(--color-danger-hover); }
 
 /* --- Accessibilità (pilastro 2026) --- */
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
-  .skeleton::after { animation: none; }   /* spegne anche lo shimmer */
-}
+/* variante distruttiva: <button class="danger">Elimina</button> */
+button.danger { background: var(--color-danger); }
+button.danger:hover { background: var(--color-danger-hover); }
 
 /* --- Skeleton (segnaposto di caricamento) --- */
 .skeleton {
@@ -200,4 +194,15 @@ button.danger:hover { background: var(--color-danger-hover); }
 
 @keyframes skeleton-shimmer {
   to { transform: translateX(100%); }  /* scorre fino a destra e ricomincia */
+}
+
+/* --- Accessibilità (pilastro 2026) --- */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  .skeleton::after { animation: none; }   /* ora è l'ultima regola → vince */
 }
