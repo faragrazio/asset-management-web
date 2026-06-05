@@ -15,6 +15,7 @@ export class AssetList implements OnInit {
   readonly assets = signal<Asset[]>([]);
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly skeletonRows = [0, 1, 2, 3, 4];  // array fittizio: ripete la riga-scheletro
 
   ngOnInit(): void {
     this.loadAssets();

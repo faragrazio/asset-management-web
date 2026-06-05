@@ -2,15 +2,9 @@
 
 <a routerLink="/assets/new" class="btn-new">+ Nuovo asset</a>
 
-@if (isLoading()) {
-  <p>Caricamento in corso...</p>
-}
-
 @if (error()) {
   <p class="error">{{ error() }}</p>
-}
-
-@if (!isLoading() && !error()) {
+} @else {
   <table>
     <thead>
       <tr>
@@ -22,19 +16,32 @@
       </tr>
     </thead>
     <tbody>
-      @for (asset of assets(); track asset.id) {
-        <tr>
-          <td>{{ asset.name }}</td>
-          <td>{{ asset.category }}</td>
-          <td>{{ asset.location }}</td>
-          <td>{{ asset.statusName }}</td>
-          <td>
-            <div class="actions">
-              <a [routerLink]="['/assets', asset.id, 'edit']" class="btn-edit">Modifica</a>
-              <button class="danger" (click)="onDelete(asset.id)">Elimina</button>
-            </div>
-          </td>
-        </tr>
+      @if (isLoading()) {
+        <!-- righe-scheletro: stessa tabella, stesse colonne del contenuto vero -->
+        @for (i of skeletonRows; track i) {
+          <tr>
+            <td><span class="skeleton" style="width: 70%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 60%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 40%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 96px; height: 1rem;"></span></td>
+          </tr>
+        }
+      } @else {
+        @for (asset of assets(); track asset.id) {
+          <tr>
+            <td>{{ asset.name }}</td>
+            <td>{{ asset.category }}</td>
+            <td>{{ asset.location }}</td>
+            <td>{{ asset.statusName }}</td>
+            <td>
+              <div class="actions">
+                <a [routerLink]="['/assets', asset.id, 'edit']" class="btn-edit">Modifica</a>
+                <button class="danger" (click)="onDelete(asset.id)">Elimina</button>
+              </div>
+            </td>
+          </tr>
+        }
       }
     </tbody>
   </table>
