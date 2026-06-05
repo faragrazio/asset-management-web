@@ -1,0 +1,36 @@
+<h2>Asset</h2>
+
+@if (isLoading()) {
+  <p>Caricamento in corso...</p>
+}
+
+@if (error()) {
+  <p>{{ error() }}</p>
+}
+
+@if (!isLoading() && !error()) {
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Categoria</th>
+        <th>Posizione</th>
+        <th>Stato</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (asset of assets(); track asset.id) {
+        <tr>
+          <td>{{ asset.name }}</td>
+          <td>{{ asset.category }}</td>
+          <td>{{ asset.location }}</td>
+          <td>{{ asset.statusName }}</td>
+          <td>
+            <button (click)="onDelete(asset.id)">Elimina</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
