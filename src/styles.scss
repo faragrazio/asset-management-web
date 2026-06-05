@@ -1,1 +1,169 @@
-/* You can add global styles to this file, and also import other style files */
+/* ===========================================================
+   DESIGN TOKENS — un solo posto per colori, spazi, font.
+   Cambi un valore qui → cambia in tutta l'app.
+   =========================================================== */
+:root {
+  /* Superfici e testo */
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-text: #16191f;
+  --color-text-muted: #5b6470;
+  --color-border: #e6e8ec;
+
+  /* Azione */
+  --color-primary: #2f5bea;
+  --color-primary-hover: #244ad0;
+  --color-danger: #d92d20;
+  --color-danger-hover: #b42318;
+
+  /* Tipografia */
+  --font-display: "Sora", sans-serif;        /* titoli */
+  --font-body: "IBM Plex Sans", sans-serif;  /* testo e UI */
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-xl: 1.75rem;
+
+  /* Spaziatura (scala coerente, multipli di 4px) */
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  /* Raggi, ombre, movimento */
+  --radius: 10px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --transition: 160ms ease;
+}
+
+/* ===========================================================
+   STILI BASE — consumano i token con var(...)
+   =========================================================== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  max-width: 880px;
+  padding: var(--space-8) var(--space-4);
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.55;
+}
+
+h1, h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-6);
+}
+
+/* --- Tabella come card --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;            /* arrotonda anche gli angoli interni */
+  box-shadow: var(--shadow-sm);
+}
+
+th, td {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+th {
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background var(--transition); }
+tbody tr:hover { background: var(--color-bg); }
+
+/* --- Form come card --- */
+form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  width: 100%;       /* responsive: riempie lo spazio disponibile... */
+  max-width: 460px;  /* ...ma non supera i 460px */
+}
+
+/* Un "campo" può essere un <div> (form Asset) O una <label> che avvolge
+   l'input (form di login). In entrambi i casi impila etichetta e input. */
+form > div,
+form > label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);            /* spazio tra etichetta e input */
+  margin-bottom: var(--space-4); /* spazio tra un campo e l'altro */
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* etichetta usata come elemento separato (nei form Asset) */
+label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+input {
+  width: 100%;       /* l'input riempie tutta la larghezza del campo */
+  padding: var(--space-3);
+  font: inherit;
+  font-weight: 400;  /* l'input non eredita il grassetto dell'etichetta */
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(47, 91, 234, 0.15);
+}
+
+/* --- Pulsanti --- */
+button {
+  padding: var(--space-3) var(--space-4);
+  font: inherit;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: #fff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+
+button:hover { background: var(--color-primary-hover); }
+button:active { transform: translateY(1px); }  /* micro-feedback al click */
+td button + button { margin-left: var(--space-2); }
+
+/* variante distruttiva: <button class="danger">Elimina</button> */
+button.danger { background: var(--color-danger); }
+button.danger:hover { background: var(--color-danger-hover); }
+
+/* --- Accessibilità (pilastro 2026) --- */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
