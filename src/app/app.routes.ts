@@ -25,6 +25,13 @@ export const routes: Routes = [
     loadComponent: () => import('./features/assets/asset-create/asset-create').then((m) => m.AssetCreate),
   },
 
+  {
+    path: 'assets/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/assets/asset-edit/asset-edit').then((m) => m.AssetEdit),
+  },
+
   { 
     path: '', redirectTo: 'home', pathMatch: 'full' 
   },
@@ -32,4 +39,5 @@ export const routes: Routes = [
   { 
     path: '**', redirectTo: 'home' 
   },
+ 
 ];

@@ -1,0 +1,24 @@
+<h2>Modifica Asset</h2>
+
+@if (error()) {
+  <p>{{ error() }}</p>
+}
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Nome</label>
+    <input type="text" formControlName="name" />
+  </div>
+
+  <div>
+    <label>Categoria</label>
+    <input type="text" formControlName="category" />
+  </div>
+
+  <div>
+    <label>Posizione</label>
+    <input type="text" formControlName="location" />
+  </div>
+
+  <button type="submit">Salva modifiche</button>
+</form>

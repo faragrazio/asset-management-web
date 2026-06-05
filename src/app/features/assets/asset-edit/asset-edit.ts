@@ -1,0 +1,63 @@
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AssetService } from '../../../core/services/asset.service';
+
+@Component({
+  selector: 'app-asset-edit',
+  imports: [ReactiveFormsModule],
+  templateUrl: './asset-edit.html',
+  styleUrl: './asset-edit.scss',
+})
+export class AssetEdit implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly assetService = inject(AssetService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute); // per leggere l'id dall'URL
+
+  // Id dell'asset da modificare: lo leggo una volta e lo conservo per l'update.
+  // Non è un signal: non cambia mai e nessun template lo osserva.
+  private assetId = 0;
+
+  // Stesso schema del form di creazione, ma solo i 3 campi che l'update accetta.
+  readonly form = this.fb.nonNullable.group({
+    name: [''],
+    category: [''],
+    location: [''],
+  });
+
+  readonly error = signal<string | null>(null);
+
+  ngOnInit(): void {
+    // paramMap.get('id') torna una stringa (o null): la converto in numero.
+    this.assetId = Number(this.route.snapshot.paramMap.get('id'));
+
+    // Carico l'asset esistente e riempio il form con i suoi valori.
+    this.assetService.getById(this.assetId).subscribe({
+      next: (asset) => {
+        this.form.patchValue({
+          name: asset.name,
+          category: asset.category,
+          location: asset.location,
+        });
+      },
+      error: () => this.error.set('Impossibile caricare l\'asset.'),
+    });
+  }
+
+  onSubmit(): void {
+    // Ricostruisco l'oggetto UpdateAssetRequest: id (dall'URL) + i 3 campi del form.
+    const dati = this.form.getRawValue();
+    this.assetService
+      .update({
+        id: this.assetId,
+        name: dati.name,
+        category: dati.category,
+        location: dati.location,
+      })
+      .subscribe({
+        next: () => this.router.navigate(['/assets']),
+        error: () => this.error.set('Impossibile salvare le modifiche.'),
+      });
+  }
+}
