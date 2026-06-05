@@ -1,11 +1,13 @@
 <h2>Asset</h2>
 
+<a routerLink="/assets/new" class="btn-new">+ Nuovo asset</a>
+
 @if (isLoading()) {
   <p>Caricamento in corso...</p>
 }
 
 @if (error()) {
-  <p>{{ error() }}</p>
+  <p class="error">{{ error() }}</p>
 }
 
 @if (!isLoading() && !error()) {
@@ -27,7 +29,10 @@
           <td>{{ asset.location }}</td>
           <td>{{ asset.statusName }}</td>
           <td>
-            <button (click)="onDelete(asset.id)">Elimina</button>
+            <div class="actions">
+              <a [routerLink]="['/assets', asset.id, 'edit']" class="btn-edit">Modifica</a>
+              <button class="danger" (click)="onDelete(asset.id)">Elimina</button>
+            </div>
           </td>
         </tr>
       }

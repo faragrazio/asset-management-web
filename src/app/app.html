@@ -1,1 +1,16 @@
-<router-outlet />
+@if (isLoggedIn()) {
+  <nav class="navbar">
+    <span class="brand">AssetManagement</span>
+
+    <div class="links">
+      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <a routerLink="/assets" routerLinkActive="active">Asset</a>
+    </div>
+
+    <button class="logout" (click)="logout()">Logout</button>
+  </nav>
+}
+
+<main>
+  <router-outlet />
+</main>
