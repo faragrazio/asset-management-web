@@ -33,3 +33,9 @@
   color: var(--color-primary);
   border-color: var(--color-primary);
 }
+
+/* Messaggio di errore sotto un campo non valido */
+.field-error {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}

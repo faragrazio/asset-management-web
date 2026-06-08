@@ -9,26 +9,42 @@
     <div>
       <label>Nome</label>
       <input type="text" formControlName="name" />
+      <!-- errore mostrato solo se il campo è invalido E l'utente l'ha già toccato -->
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <p class="field-error">Il nome è obbligatorio.</p>
+      }
     </div>
 
     <div>
       <label>Numero di serie</label>
       <input type="text" formControlName="serialNumber" />
+      @if (form.controls.serialNumber.invalid && form.controls.serialNumber.touched) {
+        <p class="field-error">Il numero di serie è obbligatorio.</p>
+      }
     </div>
 
     <div>
       <label>Categoria</label>
       <input type="text" formControlName="category" />
+      @if (form.controls.category.invalid && form.controls.category.touched) {
+        <p class="field-error">La categoria è obbligatoria.</p>
+      }
     </div>
 
     <div>
       <label>Posizione</label>
       <input type="text" formControlName="location" />
+      @if (form.controls.location.invalid && form.controls.location.touched) {
+        <p class="field-error">La posizione è obbligatoria.</p>
+      }
     </div>
 
     <div>
       <label>Data di acquisto</label>
       <input type="date" formControlName="purchaseDate" />
+      @if (form.controls.purchaseDate.invalid && form.controls.purchaseDate.touched) {
+        <p class="field-error">La data di acquisto è obbligatoria.</p>
+      }
     </div>
 
     <button type="submit">Salva</button>
