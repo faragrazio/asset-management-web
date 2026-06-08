@@ -2,6 +2,40 @@
 
 <a routerLink="/assets/new" class="btn-new">+ Nuovo asset</a>
 
+<div class="filtro">
+  <span class="filtro-label">Categoria:</span>
+
+  <div class="dropdown">
+    <!-- bottone che apre/chiude e mostra la scelta corrente -->
+    <button type="button" class="dropdown-trigger" (click)="apriChiudiMenu()">
+      <span>{{ categoriaSelezionata() || 'Tutte' }}</span>
+      <span class="chevron" [class.aperto]="menuAperto()">▾</span>
+    </button>
+
+    @if (menuAperto()) {
+      <!-- strato invisibile: un click fuori chiude il menu (come il dialog) -->
+      <div class="dropdown-backdrop" (click)="chiudiMenu()"></div>
+
+      <!-- il pannello con le voci -->
+      <div class="dropdown-menu">
+        <button
+          type="button"
+          [class.attiva]="categoriaSelezionata() === ''"
+          (click)="scegliCategoria('')"
+        >Tutte</button>
+
+        @for (cat of categorie(); track cat) {
+          <button
+            type="button"
+            [class.attiva]="categoriaSelezionata() === cat"
+            (click)="scegliCategoria(cat)"
+          >{{ cat }}</button>
+        }
+      </div>
+    }
+  </div>
+</div>
+
 @if (error()) {
   <p class="error">{{ error() }}</p>
 } @else {
@@ -27,9 +61,8 @@
             <td><span class="skeleton" style="width: 96px; height: 1rem;"></span></td>
           </tr>
         }
-      } 
-      @else {
-        @for (asset of assets(); track asset.id) {
+      } @else {
+        @for (asset of assetsFiltrati(); track asset.id) {
           <tr>
             <td>{{ asset.name }}</td>
             <td>{{ asset.category }}</td>
@@ -38,25 +71,25 @@
             <td>
               <div class="actions">
                 <a [routerLink]="['/assets', asset.id, 'edit']" class="btn-edit">Modifica</a>
-                <button class="danger" (click)="chiediConferma(asset.id)">Elimina</button>              </div>
+                <button class="danger" (click)="chiediConferma(asset.id)">Elimina</button>
+              </div>
             </td>
           </tr>
-        }      
+        }
       }
-
-      @if (idDaEliminare() !== null) {
-          <div class="dialog-overlay">
-            <div class="dialog">
-              <h3>Conferma eliminazione</h3>
-              <p>Sei sicuro di voler eliminare questo asset? L'operazione non è reversibile.</p>
-              <div class="dialog-actions">
-                <button class="secondary" (click)="annullaEliminazione()">Annulla</button>
-                <button class="danger" (click)="confermaEliminazione()">Elimina</button>
-              </div>
-            </div>
-          </div>
-       }
-       
     </tbody>
   </table>
+}
+
+@if (idDaEliminare() !== null) {
+  <div class="dialog-overlay">
+    <div class="dialog">
+      <h3>Conferma eliminazione</h3>
+      <p>Sei sicuro di voler eliminare questo asset? L'operazione non è reversibile.</p>
+      <div class="dialog-actions">
+        <button class="secondary" (click)="annullaEliminazione()">Annulla</button>
+        <button class="danger" (click)="confermaEliminazione()">Elimina</button>
+      </div>
+    </div>
+  </div>
 }
