@@ -27,7 +27,8 @@
             <td><span class="skeleton" style="width: 96px; height: 1rem;"></span></td>
           </tr>
         }
-      } @else {
+      } 
+      @else {
         @for (asset of assets(); track asset.id) {
           <tr>
             <td>{{ asset.name }}</td>
@@ -37,12 +38,25 @@
             <td>
               <div class="actions">
                 <a [routerLink]="['/assets', asset.id, 'edit']" class="btn-edit">Modifica</a>
-                <button class="danger" (click)="onDelete(asset.id)">Elimina</button>
-              </div>
+                <button class="danger" (click)="chiediConferma(asset.id)">Elimina</button>              </div>
             </td>
           </tr>
-        }
+        }      
       }
+
+      @if (idDaEliminare() !== null) {
+          <div class="dialog-overlay">
+            <div class="dialog">
+              <h3>Conferma eliminazione</h3>
+              <p>Sei sicuro di voler eliminare questo asset? L'operazione non è reversibile.</p>
+              <div class="dialog-actions">
+                <button class="secondary" (click)="annullaEliminazione()">Annulla</button>
+                <button class="danger" (click)="confermaEliminazione()">Elimina</button>
+              </div>
+            </div>
+          </div>
+       }
+       
     </tbody>
   </table>
 }

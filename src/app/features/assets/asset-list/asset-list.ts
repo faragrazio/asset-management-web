@@ -17,6 +17,9 @@ export class AssetList implements OnInit {
   readonly error = signal<string | null>(null);
   readonly skeletonRows = [0, 1, 2, 3, 4];  // array fittizio: ripete la riga-scheletro
 
+  // Se è null, il dialog è CHIUSO. Se contiene un id, il dialog è APERTO per quell'asset. Un solo signal fa due lavori: aperto/chiuso + quale asset.
+ readonly idDaEliminare = signal<number | null>(null);
+
   ngOnInit(): void {
     this.loadAssets();
   }
@@ -36,11 +39,29 @@ export class AssetList implements OnInit {
     });
   }
 
-  // onDelete RESTA: è un'azione, non una navigazione
-  onDelete(id: number): void {
-    this.assetService.delete(id).subscribe({
-      next: () => this.loadAssets(),
-      error: () => this.error.set('Impossibile eliminare l\'asset.'),
-    });
+// Click su "Elimina" nella RIGA: non elimino, apro solo il dialog
+// salvando quale asset si vuole eliminare.
+chiediConferma(id: number): void {
+  this.idDaEliminare.set(id);
+}
+
+// Click su "Annulla" nel DIALOG: chiudo senza fare niente.
+annullaEliminazione(): void {
+  this.idDaEliminare.set(null);
+}
+
+// Click su "Elimina" nel DIALOG: eseguo davvero l'eliminazione.
+confermaEliminazione(): void {
+  const id = this.idDaEliminare();
+  if (id === null) {
+    return; // sicurezza: senza id non procedo
   }
+
+  this.assetService.delete(id).subscribe({
+    next: () => this.loadAssets(),
+    error: () => this.error.set('Impossibile eliminare l\'asset.'),
+  });
+
+  this.idDaEliminare.set(null); // chiudo il dialog
+}
 }
