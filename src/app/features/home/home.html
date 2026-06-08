@@ -1,12 +1,57 @@
-<div class="home">
-  <h1>Benvenuto, {{ user()?.fullName }}</h1>
-  <p>Ruolo: {{ user()?.role }}</p>
+<section class="home">
+  <!-- Intestazione: saluto + ruolo come badge accanto -->
+  <header class="welcome">
+    <h1>Benvenuto, {{ user()?.fullName }}</h1>
+    <span class="role-badge">{{ user()?.role }}</span>
+  </header>
 
-  @if (assetCount() !== null) {
-    <p>Chiamata protetta riuscita — asset trovati: {{ assetCount() }}</p>
-  } @else if (error()) {
-    <p class="error">{{ error() }}</p>
+  <!-- Riepilogo: griglia di metriche ricavate dallo stesso elenco asset -->
+  @if (error()) {
+    <p class="stat-error">{{ error() }}</p>
   } @else {
-    <p>Caricamento...</p>
+    <div class="stat-grid">
+
+      <div class="stat-card">
+        <span class="stat-label">Asset totali</span>
+        @if (totale() !== null) {
+          <span class="stat-value">{{ totale() }}</span>
+        } @else {
+          <span class="skeleton stat-skeleton"></span>
+        }
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-label">Categorie</span>
+        @if (categorie() !== null) {
+          <span class="stat-value">{{ categorie() }}</span>
+        } @else {
+          <span class="skeleton stat-skeleton"></span>
+        }
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-label">In manutenzione</span>
+        @if (inManutenzione() !== null) {
+          <span class="stat-value">{{ inManutenzione() }}</span>
+        } @else {
+          <span class="skeleton stat-skeleton"></span>
+        }
+      </div>
+
+    </div>
   }
-</div>
+
+  <!-- Azioni rapide: scorciatoie navigabili alle pagine principali -->
+  <section class="quick-actions">
+    <a routerLink="/assets" class="action-card">
+      <span class="action-title">Gestisci asset</span>
+      <span class="action-desc">Visualizza, modifica ed elimina gli asset esistenti</span>
+    </a>
+
+    <a routerLink="/assets/new" class="action-card">
+      <span class="action-title">Nuovo asset</span>
+      <span class="action-desc">Aggiungi un nuovo asset all'inventario</span>
+    </a>
+  </section>
+  
+</section>

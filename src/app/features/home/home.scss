@@ -1,0 +1,105 @@
+/* Intestazione di benvenuto: titolo e badge sulla stessa riga */
+.welcome {
+  display: flex;
+  align-items: center;        /* titolo e badge allineati a metà altezza */
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+/* nell'header il titolo non serve abbia il margine sotto globale */
+.welcome h1 {
+  margin: 0;
+}
+
+/* il ruolo come "pillola": etichetta piccola e arrotondata */
+.role-badge {
+  padding: var(--space-2) var(--space-3);
+  border-radius: 999px;                  /* raggio enorme = lati a semicerchio (pillola) */
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  background: rgba(47, 91, 234, 0.1);    /* il blu del brand, ma trasparente come sfondo */
+}
+
+/* Card riepilogo */
+.stat-card {
+  display: flex;
+  flex-direction: column;     /* etichetta sopra, numero sotto */
+  gap: var(--space-2);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* il numero grande: è il protagonista della card */
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+.stat-error {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+/* lo skeleton dimensionato come il numero, mentre carica */
+.stat-skeleton {
+  width: 64px;
+  height: 2.5rem;
+}
+
+/* Griglia delle metriche: tante colonne quante ne stanno, larghe almeno 180px */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+/* Azioni rapide: scorciatoie navigabili sotto le metriche */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));  /* stesso schema responsive delle metriche */
+  gap: var(--space-4);
+}
+
+/* ogni scorciatoia è un'intera card cliccabile (un <a>) */
+.action-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;            /* tolgo la sottolineatura tipica dei link */
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+/* feedback all'hover: bordo nel blu del brand e leggero sollevamento */
+.action-card:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.action-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.action-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
