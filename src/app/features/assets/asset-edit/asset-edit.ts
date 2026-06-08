@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AssetService } from '../../../core/services/asset.service';
 
@@ -21,9 +21,9 @@ export class AssetEdit implements OnInit {
 
   // Stesso schema del form di creazione, ma solo i 3 campi che l'update accetta.
   readonly form = this.fb.nonNullable.group({
-    name: [''],
-    category: [''],
-    location: [''],
+    name: ['', Validators.required],
+    category: ['', Validators.required],
+    location: ['', Validators.required],
   });
 
 readonly error = signal<string | null>(null);
@@ -50,6 +50,11 @@ ngOnInit(): void {
 }
 
   onSubmit(): void {
+    
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     // Ricostruisco l'oggetto UpdateAssetRequest: id (dall'URL) + i 3 campi del form.
     const dati = this.form.getRawValue();
     this.assetService

@@ -18,20 +18,30 @@
         </div>
       }
       <span class="skeleton" style="width: 150px; height: 2.75rem;"></span>      <!-- bottone -->
-    } @else {
+    } 
+    @else {
       <div>
         <label>Nome</label>
         <input type="text" formControlName="name" />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="field-error">Il nome è obbligatorio.</p>
+        }
       </div>
 
       <div>
         <label>Categoria</label>
         <input type="text" formControlName="category" />
+        @if (form.controls.category.invalid && form.controls.category.touched) {
+          <p class="field-error">La categoria è obbligatoria.</p>
+        }
       </div>
 
       <div>
         <label>Posizione</label>
         <input type="text" formControlName="location" />
+        @if (form.controls.location.invalid && form.controls.location.touched) {
+          <p class="field-error">La posizione è obbligatoria.</p>
+        }
       </div>
 
       <button type="submit">Salva modifiche</button>
