@@ -1,0 +1,217 @@
+/* Intestazione di pagina: titolo a sinistra, azione a destra, stessa riga */
+.page-header {
+  display: flex;
+  align-items: center;             /* titolo e bottone allineati a metà altezza */
+  justify-content: space-between;  /* titolo a sx, bottone spinto a dx */
+  gap: var(--space-4);             /* respiro minimo se la riga si stringe */
+  margin-bottom: var(--space-6);   /* ora è l'header a staccare dalla toolbar */
+}
+
+/* dentro l'header il titolo NON deve avere il margine sotto globale,
+   altrimenti sballa l'allineamento verticale col bottone */
+.page-header h2 {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.btn-new,
+.btn-edit {
+  display: inline-block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  transition: background var(--transition);
+}
+
+.btn-new {
+  background: var(--color-primary);
+  color: #fff;
+  /* margin-bottom rimosso: lo spazio sotto ora lo dà .page-header */
+}
+.btn-new:hover { background: var(--color-primary-hover); }
+
+.btn-edit {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+.btn-edit:hover { background: var(--color-border); }
+
+/* Sfondo scuro semi-trasparente che copre tutta la pagina e centra il dialog */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;                              /* top/right/bottom/left = 0 → copre tutto lo schermo */
+  background: rgba(22, 25, 31, 0.45);     /* velo scuro sul contenuto sotto */
+  display: flex;
+  align-items: center;                    /* centra in verticale */
+  justify-content: center;                /* centra in orizzontale */
+  padding: var(--space-4);
+  z-index: 50;                            /* sta sopra a tutto il resto */
+}
+
+/* La card del dialog */
+.dialog {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 420px;
+}
+
+.dialog h3 {
+  font-family: var(--font-display);
+  margin: 0 0 var(--space-3);
+}
+
+.dialog p {
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-6);
+}
+
+/* I due bottoni in fondo, allineati a destra */
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* Bottone "Annulla": versione discreta (non il blu pieno) */
+.dialog-actions .secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.dialog-actions .secondary:hover {
+  background: var(--color-bg);
+}
+
+.filtro {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.filtro-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* il contenitore: il pannello si posiziona rispetto a questo */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* il bottone-trigger */
+.dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 200px;
+  font: inherit;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dropdown-trigger:hover {
+  background: var(--color-surface);   /* tengo lo sfondo chiaro (annullo il blu globale) */
+  border-color: var(--color-text-muted);
+}
+.dropdown-trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(47, 91, 234, 0.15);
+}
+
+/* la freccia, che ruota quando il menu è aperto */
+.chevron {
+  transition: transform var(--transition);
+  color: var(--color-text-muted);
+}
+.chevron.aperto {
+  transform: rotate(180deg);
+}
+
+/* strato invisibile a tutto schermo dietro al pannello */
+.dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+/* il pannello delle voci */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));   /* poco sotto il trigger */
+  left: 0;
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  z-index: 50;                        /* sopra allo strato invisibile */
+}
+
+/* ogni voce è un bottone "piatto" a piena larghezza */
+.dropdown-menu button {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.dropdown-menu button:hover {
+  background: var(--color-bg);
+}
+
+/* la voce attualmente selezionata: nel TUO blu, in grassetto */
+.dropdown-menu button.attiva {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Pillola colorata, base comune a stato e priorità */
+.badge {
+  display: inline-block;
+  padding: 0.15rem var(--space-2);
+  border-radius: 999px;           /* angoli pienamente arrotondati → forma a pillola */
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Colori per STATO ordine — coppie sfondo/testo a basso contrasto, leggibili */
+.badge-pending    { background: #fef3c7; color: #92400e; } /* giallo: in attesa */
+.badge-inprogress { background: #dbeafe; color: #1e40af; } /* blu: in corso */
+.badge-completed  { background: #dcfce7; color: #166534; } /* verde: completato */
+.badge-cancelled  { background: #f3f4f6; color: #6b7280; } /* grigio: annullato */
+
+/* Colori per PRIORITÀ — la gravità sale dal grigio al rosso */
+.prio-low      { background: #f3f4f6; color: #6b7280; }
+.prio-medium   { background: #dbeafe; color: #1e40af; }
+.prio-high     { background: #ffedd5; color: #9a3412; }
+.prio-critical { background: #fee2e2; color: #991b1b; }

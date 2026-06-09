@@ -37,6 +37,15 @@ export const routes: Routes = [
       import('./features/assets/asset-edit/asset-edit').then((m) => m.AssetEdit),
   },
 
+  {
+    path: 'maintenance',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/maintenance/maintenance-list/maintenance-list').then(
+        (m) => m.MaintenanceList,
+      ),
+  },
+  
   { 
     path: '', redirectTo: 'home', pathMatch: 'full' 
   },

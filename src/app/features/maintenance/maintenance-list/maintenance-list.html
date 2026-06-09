@@ -1,0 +1,79 @@
+<!-- Intestazione: titolo a sinistra, azione primaria a destra (come la lista asset) -->
+<header class="page-header">
+  <h2>Manutenzioni</h2>
+  <a routerLink="/maintenance/new" class="btn-new">+ Nuovo ordine</a>
+</header>
+
+<!-- Filtro per stato: stessa tendina custom della lista asset -->
+<div class="filtro">
+  <span class="filtro-label">Stato:</span>
+
+  <div class="dropdown">
+    <button type="button" class="dropdown-trigger" (click)="apriChiudiMenu()">
+      <span>{{ statoSelezionato() || 'Tutti' }}</span>
+      <span class="chevron" [class.aperto]="menuAperto()">▾</span>
+    </button>
+
+    @if (menuAperto()) {
+      <div class="dropdown-backdrop" (click)="chiudiMenu()"></div>
+
+      <div class="dropdown-menu">
+        <button
+          type="button"
+          [class.attiva]="statoSelezionato() === ''"
+          (click)="scegliStato('')"
+        >Tutti</button>
+
+        @for (stato of statiPossibili; track stato) {
+          <button
+            type="button"
+            [class.attiva]="statoSelezionato() === stato"
+            (click)="scegliStato(stato)"
+          >{{ stato }}</button>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+@if (error()) {
+  <p class="error">{{ error() }}</p>
+} @else {
+  <table>
+    <thead>
+      <tr>
+        <th>Asset</th>
+        <th>Intervento</th>
+        <th>Priorità</th>
+        <th>Stato</th>
+        <th>Tecnico</th>
+        <th>Data prevista</th>
+      </tr>
+    </thead>
+    <tbody>
+      @if (isLoading()) {
+        @for (i of skeletonRows; track i) {
+          <tr>
+            <td><span class="skeleton" style="width: 70%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 80%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 60%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+          </tr>
+        }
+      } @else {
+        @for (order of ordersFiltrati(); track order.id) {
+          <tr>
+            <td>{{ order.assetName }}</td>
+            <td>{{ order.title }}</td>
+            <td><span [class]="classePriorita(order.priorityName)">{{ order.priorityName }}</span></td>
+            <td><span [class]="classeStato(order.statusName)">{{ order.statusName }}</span></td>
+            <td>{{ order.assignedTo }}</td>
+            <td>{{ order.scheduledDate | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+}
