@@ -38,7 +38,8 @@
 
 @if (error()) {
   <p class="error">{{ error() }}</p>
-} @else {
+} 
+@else {
   <table>
     <thead>
       <tr>
@@ -48,6 +49,7 @@
         <th>Stato</th>
         <th>Tecnico</th>
         <th>Data prevista</th>
+        <th>Azioni</th>
       </tr>
     </thead>
     <tbody>
@@ -60,9 +62,12 @@
             <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
             <td><span class="skeleton" style="width: 60%; height: 1rem;"></span></td>
             <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+            <td><span class="skeleton" style="width: 96px; height: 1rem;"></span></td>
           </tr>
         }
-      } @else {
+      } 
+      @else {
         @for (order of ordersFiltrati(); track order.id) {
           <tr>
             <td>{{ order.assetName }}</td>
@@ -71,9 +76,52 @@
             <td><span [class]="classeStato(order.statusName)">{{ order.statusName }}</span></td>
             <td>{{ order.assignedTo }}</td>
             <td>{{ order.scheduledDate | date: 'dd/MM/yyyy' }}</td>
+            <td>
+              <div class="actions">
+                @if (order.status === OrderStatus.Pending) {
+                  <button class="btn-mini" (click)="avvia(order)">Avvia</button>
+                  <button class="btn-mini danger" (click)="chiediConferma(order, 'annulla')">Annulla</button>
+                }
+                @if (order.status === OrderStatus.InProgress) {
+                  <button class="btn-mini" (click)="chiediConferma(order, 'completa')">Completa</button>
+                  <button class="btn-mini danger" (click)="chiediConferma(order, 'annulla')">Annulla</button>
+                }
+                @if (order.status === OrderStatus.Completed || order.status === OrderStatus.Cancelled) {
+                  <span class="no-actions">—</span>
+                }
+              </div>
+            </td>
           </tr>
         }
       }
     </tbody>
   </table>
+}
+
+@if (azioneDaConfermare(); as azione) {
+  <div class="dialog-overlay">
+    <div class="dialog">
+      @if (azione.tipo === 'completa') {
+        <h3>Completa ordine</h3>
+        <p>Stai completando l'intervento «{{ azione.ordine.title }}». Puoi aggiungere note di completamento (facoltative).</p>
+        <textarea
+          rows="3"
+          placeholder="Note di completamento…"
+          [value]="noteCompletamento()"
+          (input)="aggiornaNote($event)"
+        ></textarea>
+        <div class="dialog-actions">
+          <button class="secondary" (click)="annullaDialog()">Annulla</button>
+          <button (click)="conferma()">Completa</button>
+        </div>
+      } @else {
+        <h3>Annulla ordine</h3>
+        <p>Vuoi davvero annullare l'intervento «{{ azione.ordine.title }}»? L'operazione non è reversibile.</p>
+        <div class="dialog-actions">
+          <button class="secondary" (click)="annullaDialog()">Indietro</button>
+          <button class="danger" (click)="conferma()">Annulla ordine</button>
+        </div>
+      }
+    </div>
+  </div>
 }

@@ -2,8 +2,7 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { MaintenanceOrderService } from '../../../core/services/maintenance-order.service';
-import { MaintenanceOrder } from '../../../core/models/maintenance-order.model';
-
+import {MaintenanceOrder, OrderStatus, UpdateOrderStatusRequest,} from '../../../core/models/maintenance-order.model';
 @Component({
   selector: 'app-maintenance-list',
   imports: [RouterLink, DatePipe], // DatePipe serve per formattare la data nel template
@@ -34,6 +33,73 @@ export class MaintenanceList implements OnInit {
     }
     return this.orders().filter((o) => o.statusName === stato);
   });
+
+  // Espongo l'enum al template per i confronti di stato (order.status === OrderStatus.Pending).
+  readonly OrderStatus = OrderStatus;
+
+  // Dialog di conferma. null = chiuso. Quando è valorizzato porta SIA l'ordine
+  // SIA il tipo di azione: un solo signal fa due lavori.
+  readonly azioneDaConfermare = signal<{
+    ordine: MaintenanceOrder;
+    tipo: 'completa' | 'annulla';
+  } | null>(null);
+
+  // Testo della textarea note nel dialog di completamento.
+  readonly noteCompletamento = signal('');
+
+  // Avvia: Pending → InProgress. Diretto, senza conferma.
+  avvia(ordine: MaintenanceOrder): void {
+    this.cambiaStato({ orderId: ordine.id, newStatus: OrderStatus.InProgress });
+  }
+
+  // Apre il dialog per completare o annullare l'ordine.
+  chiediConferma(ordine: MaintenanceOrder, tipo: 'completa' | 'annulla'): void {
+    this.noteCompletamento.set(''); // azzero le note ogni volta che apro
+    this.azioneDaConfermare.set({ ordine, tipo });
+  }
+
+  // Chiude il dialog senza fare niente.
+  annullaDialog(): void {
+    this.azioneDaConfermare.set(null);
+  }
+
+  // Tiene aggiornato il signal delle note mentre l'utente scrive.
+  aggiornaNote(event: Event): void {
+    this.noteCompletamento.set((event.target as HTMLTextAreaElement).value);
+  }
+
+  // Conferma dal dialog: esegue completa o annulla in base al tipo salvato.
+  conferma(): void {
+    const azione = this.azioneDaConfermare();
+    if (!azione) {
+      return;
+    }
+
+    if (azione.tipo === 'completa') {
+      this.cambiaStato({
+        orderId: azione.ordine.id,
+        newStatus: OrderStatus.Completed,
+        // note vuote → undefined: il campo è facoltativo
+        completionNotes: this.noteCompletamento() || undefined,
+      });
+    } else {
+      this.cambiaStato({
+        orderId: azione.ordine.id,
+        newStatus: OrderStatus.Cancelled,
+      });
+    }
+
+    this.azioneDaConfermare.set(null);
+  }
+
+  // Chiamata comune al backend + ricarica della lista per riflettere il nuovo stato.
+  private cambiaStato(request: UpdateOrderStatusRequest): void {
+    this.error.set(null);
+    this.orderService.updateStatus(request).subscribe({
+      next: () => this.loadOrders(),
+      error: (err) => this.error.set(err.error?.error ?? 'Operazione non riuscita.'),
+    });
+  }
 
   ngOnInit(): void {
     this.loadOrders();
