@@ -1,0 +1,70 @@
+<div class="register-container">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <h1>Registrati</h1>
+
+    <label>
+      Nome
+      <input type="text" formControlName="firstName" autocomplete="given-name" />
+    </label>
+    @if (form.controls.firstName.invalid && form.controls.firstName.touched) {
+      <p class="field-error">Il nome è obbligatorio.</p>
+    }
+
+    <label>
+      Cognome
+      <input type="text" formControlName="lastName" autocomplete="family-name" />
+    </label>
+    @if (form.controls.lastName.invalid && form.controls.lastName.touched) {
+      <p class="field-error">Il cognome è obbligatorio.</p>
+    }
+
+    <label>
+      Email
+      <input type="email" formControlName="email" autocomplete="email" />
+    </label>
+    @if (form.controls.email.invalid && form.controls.email.touched) {
+      <p class="field-error">Inserisci un'email valida.</p>
+    }
+
+    <label>
+      Password
+      <input type="password" formControlName="password" autocomplete="new-password" />
+    </label>
+    @if (form.controls.password.invalid && form.controls.password.touched) {
+      <p class="field-error">Minimo 8 caratteri, con almeno una maiuscola e un numero.</p>
+    }
+
+    <label>Ruolo</label>
+    <div class="dropdown">
+      <!-- trigger: mostra il ruolo corrente letto DAL FORM -->
+      <button type="button" class="dropdown-trigger" (click)="apriChiudiMenu()">
+        <span>{{ form.controls.role.value }}</span>
+        <span class="chevron" [class.aperto]="menuAperto()">▾</span>
+      </button>
+
+      @if (menuAperto()) {
+        <!-- strato invisibile: un click fuori chiude il menu -->
+        <div class="dropdown-backdrop" (click)="chiudiMenu()"></div>
+        <div class="dropdown-menu">
+          @for (ruolo of ruoli; track ruolo) {
+            <button
+              type="button"
+              [class.attiva]="form.controls.role.value === ruolo"
+              (click)="scegliRuolo(ruolo)"
+            >{{ ruolo }}</button>
+          }
+        </div>
+      }
+    </div>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <button type="submit" [disabled]="loading()">
+      {{ loading() ? 'Registrazione...' : 'Registrati' }}
+    </button>
+
+    <p class="auth-switch">Hai già un account? <a routerLink="/login">Accedi</a></p>
+  </form>
+</div>

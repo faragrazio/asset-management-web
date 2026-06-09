@@ -19,5 +19,6 @@
     <button type="submit" [disabled]="loading()">
       {{ loading() ? 'Accesso...' : 'Accedi' }}
     </button>
+    <p class="auth-switch">Non hai un account? <a routerLink="/register">Registrati</a></p>
   </form>
 </div>

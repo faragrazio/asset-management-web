@@ -1,0 +1,94 @@
+.register-container {
+  display: flex;
+  justify-content: center;   /* centra la card, come nel login */
+  padding-top: var(--space-8);
+}
+
+/* messaggio di errore sotto un campo non valido */
+.field-error {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+/* riga "Hai già un account? Accedi" sotto il bottone */
+.auth-switch {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+.auth-switch a { color: var(--color-primary); }
+
+.dropdown {
+  position: relative;
+  display: block;                 
+  margin-bottom: var(--space-4);  
+}
+.dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;                    
+  font: inherit;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.dropdown-trigger:hover {
+  border-color: var(--color-text-muted);
+}
+.dropdown-trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(47, 91, 234, 0.15);
+}
+.chevron {
+  transition: transform var(--transition);
+  color: var(--color-text-muted);
+}
+.chevron.aperto {
+  transform: rotate(180deg);
+}
+.dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  z-index: 50;
+}
+.dropdown-menu button {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.dropdown-menu button:hover {
+  background: var(--color-bg);
+}
+.dropdown-menu button.attiva {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  font-weight: 600;
+}

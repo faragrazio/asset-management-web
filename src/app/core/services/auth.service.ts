@@ -2,8 +2,7 @@ import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, AuthResponse } from '../models/auth.model';
-
+import { LoginRequest, AuthResponse, RegisterRequest } from '../models/auth.model';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -21,6 +20,12 @@ export class AuthService {
     return this.http
       .post<AuthResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(tap((response) => this.setSession(response)));
+  }
+
+  register(data: RegisterRequest): Observable<{ id: number }> {
+    // il backend risponde 201 con { id } e NON un token:
+    // crea l'utente ma non avvia la sessione → niente setSession, si va al login
+    return this.http.post<{ id: number }>(`${this.apiUrl}/register`, data);
   }
 
   logout(): void {

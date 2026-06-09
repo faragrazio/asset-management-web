@@ -12,3 +12,12 @@ export interface AuthResponse {
   role: string;
   expiresAt: string; // il backend serializza DateTime come stringa ISO
 }
+
+// Dati inviati a POST /api/auth/register
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+}
