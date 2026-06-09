@@ -45,6 +45,15 @@ export const routes: Routes = [
         (m) => m.MaintenanceList,
       ),
   },
+
+  {
+    path: 'maintenance/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/maintenance/maintenance-create/maintenance-create').then(
+        (m) => m.MaintenanceCreate,
+      ),
+  },
   
   { 
     path: '', redirectTo: 'home', pathMatch: 'full' 

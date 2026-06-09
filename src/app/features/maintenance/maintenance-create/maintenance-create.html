@@ -1,0 +1,69 @@
+<div class="form-page">
+  <header class="page-header">
+    <a routerLink="/maintenance" class="back-button" aria-label="Torna alle manutenzioni">←</a>
+    <h2>Nuovo ordine</h2>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <label>Asset</label>
+      <select formControlName="assetId">
+        <!-- placeholder non selezionabile: ngValue 0 = valore iniziale invalido -->
+        <option [ngValue]="0" disabled>Seleziona un asset…</option>
+        @for (asset of assetsAttivi(); track asset.id) {
+          <option [ngValue]="asset.id">{{ asset.name }}</option>
+        }
+      </select>
+      @if (form.controls.assetId.invalid && form.controls.assetId.touched) {
+        <p class="field-error">Seleziona un asset.</p>
+      }
+    </div>
+
+    <div>
+      <label>Intervento</label>
+      <input type="text" formControlName="title" />
+      @if (form.controls.title.invalid && form.controls.title.touched) {
+        <p class="field-error">Il titolo è obbligatorio.</p>
+      }
+    </div>
+
+    <div>
+      <label>Descrizione</label>
+      <textarea formControlName="description" rows="3"></textarea>
+      @if (form.controls.description.invalid && form.controls.description.touched) {
+        <p class="field-error">La descrizione è obbligatoria.</p>
+      }
+    </div>
+
+    <div>
+      <label>Priorità</label>
+      <select formControlName="priority">
+        @for (p of priorita; track p.value) {
+          <option [ngValue]="p.value">{{ p.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label>Tecnico assegnato</label>
+      <input type="text" formControlName="assignedTo" />
+      @if (form.controls.assignedTo.invalid && form.controls.assignedTo.touched) {
+        <p class="field-error">Il tecnico assegnato è obbligatorio.</p>
+      }
+    </div>
+
+    <div>
+      <label>Data prevista</label>
+      <input type="date" formControlName="scheduledDate" [min]="oggi" />
+      @if (form.controls.scheduledDate.invalid && form.controls.scheduledDate.touched) {
+        <p class="field-error">La data prevista è obbligatoria.</p>
+      }
+    </div>
+
+    <button type="submit">Crea ordine</button>
+  </form>
+
+  @if (error()) {
+    <p class="field-error">{{ error() }}</p>
+  }
+</div>
