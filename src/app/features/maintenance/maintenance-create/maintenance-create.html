@@ -7,13 +7,25 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div>
       <label>Asset</label>
-      <select formControlName="assetId">
-        <!-- placeholder non selezionabile: ngValue 0 = valore iniziale invalido -->
-        <option [ngValue]="0" disabled>Seleziona un asset…</option>
-        @for (asset of assetsAttivi(); track asset.id) {
-          <option [ngValue]="asset.id">{{ asset.name }}</option>
+      <div class="dropdown">
+        <button type="button" class="dropdown-trigger" (click)="apriChiudiAsset()">
+          <span>{{ nomeAssetSelezionato() }}</span>
+          <span class="chevron" [class.aperto]="menuAssetAperto()">▾</span>
+        </button>
+
+        @if (menuAssetAperto()) {
+          <div class="dropdown-backdrop" (click)="chiudiAsset()"></div>
+          <div class="dropdown-menu">
+            @for (asset of assetsAttivi(); track asset.id) {
+              <button
+                type="button"
+                [class.attiva]="form.controls.assetId.value === asset.id"
+                (click)="scegliAsset(asset.id)"
+              >{{ asset.name }}</button>
+            }
+          </div>
         }
-      </select>
+      </div>
       @if (form.controls.assetId.invalid && form.controls.assetId.touched) {
         <p class="field-error">Seleziona un asset.</p>
       }
@@ -37,11 +49,25 @@
 
     <div>
       <label>Priorità</label>
-      <select formControlName="priority">
-        @for (p of priorita; track p.value) {
-          <option [ngValue]="p.value">{{ p.label }}</option>
+      <div class="dropdown">
+        <button type="button" class="dropdown-trigger" (click)="apriChiudiPriorita()">
+          <span>{{ labelPriorita() }}</span>
+          <span class="chevron" [class.aperto]="menuPrioritaAperto()">▾</span>
+        </button>
+
+        @if (menuPrioritaAperto()) {
+          <div class="dropdown-backdrop" (click)="chiudiPriorita()"></div>
+          <div class="dropdown-menu">
+            @for (p of priorita; track p.value) {
+              <button
+                type="button"
+                [class.attiva]="form.controls.priority.value === p.value"
+                (click)="scegliPriorita(p.value)"
+              >{{ p.label }}</button>
+            }
+          </div>
         }
-      </select>
+      </div>
     </div>
 
     <div>
