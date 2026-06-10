@@ -25,6 +25,10 @@ Il progetto è costruito con **Angular 21** in stile moderno: componenti **stand
 
 <img src="docs/assets.png" alt="Elenco asset" width="900">
 
+| Nuovo asset | Modifica asset |
+|---|---|
+| <img src="docs/new-asset.png" alt="Creazione asset" width="430"> | <img src="docs/edit-asset.png" alt="Modifica asset" width="430"> |
+
 ---
 
 ## ✨ Funzionalità
