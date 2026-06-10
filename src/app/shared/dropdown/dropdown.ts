@@ -126,11 +126,12 @@ export class Dropdown {
   // --- chiusura automatica ---
   // click in un punto qualsiasi: se è FUORI dal componente, chiudo.
   @HostListener('document:click', ['$event.target'])
-  onClickFuori(target: Node): void {
+  onClickFuori(target: EventTarget | null): void {
     if (this.open() && !this.el.nativeElement.contains(target)) {
       this.chiudi();
     }
   }
+
   // il focus esce dal componente (es. Tab): chiudo.
   @HostListener('focusout', ['$event'])
   onFocusOut(e: FocusEvent): void {
