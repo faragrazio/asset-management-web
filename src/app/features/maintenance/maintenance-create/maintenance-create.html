@@ -7,25 +7,13 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div>
       <label>Asset</label>
-      <div class="dropdown">
-        <button type="button" class="dropdown-trigger" (click)="apriChiudiAsset()">
-          <span>{{ nomeAssetSelezionato() }}</span>
-          <span class="chevron" [class.aperto]="menuAssetAperto()">▾</span>
-        </button>
-
-        @if (menuAssetAperto()) {
-          <div class="dropdown-backdrop" (click)="chiudiAsset()"></div>
-          <div class="dropdown-menu">
-            @for (asset of assetsAttivi(); track asset.id) {
-              <button
-                type="button"
-                [class.attiva]="form.controls.assetId.value === asset.id"
-                (click)="scegliAsset(asset.id)"
-              >{{ asset.name }}</button>
-            }
-          </div>
-        }
-      </div>
+      <app-dropdown
+        [options]="assetOptions()"
+        [value]="form.controls.assetId.value"
+        (valueChange)="onAssetChange($event)"
+        placeholder="Seleziona un asset…"
+        ariaLabel="Seleziona un asset"
+      />
       @if (form.controls.assetId.invalid && form.controls.assetId.touched) {
         <p class="field-error">Seleziona un asset.</p>
       }
@@ -49,25 +37,12 @@
 
     <div>
       <label>Priorità</label>
-      <div class="dropdown">
-        <button type="button" class="dropdown-trigger" (click)="apriChiudiPriorita()">
-          <span>{{ labelPriorita() }}</span>
-          <span class="chevron" [class.aperto]="menuPrioritaAperto()">▾</span>
-        </button>
-
-        @if (menuPrioritaAperto()) {
-          <div class="dropdown-backdrop" (click)="chiudiPriorita()"></div>
-          <div class="dropdown-menu">
-            @for (p of priorita; track p.value) {
-              <button
-                type="button"
-                [class.attiva]="form.controls.priority.value === p.value"
-                (click)="scegliPriorita(p.value)"
-              >{{ p.label }}</button>
-            }
-          </div>
-        }
-      </div>
+      <app-dropdown
+        [options]="priorita"
+        [value]="form.controls.priority.value"
+        (valueChange)="onPriorityChange($event)"
+        ariaLabel="Seleziona la priorità"
+      />
     </div>
 
     <div>
