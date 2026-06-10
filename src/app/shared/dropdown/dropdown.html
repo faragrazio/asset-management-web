@@ -1,0 +1,34 @@
+<!-- il trigger: un div che fa da "combobox", controllato interamente da noi -->
+<div
+  class="dropdown-trigger"
+  role="combobox"
+  tabindex="0"
+  [attr.aria-label]="ariaLabel() || null"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="listboxId"
+  [attr.aria-activedescendant]="activeDescendant()"
+  aria-haspopup="listbox"
+  (click)="toggle()"
+  (keydown)="onKeydown($event)"
+>
+  <span>{{ labelCorrente() }}</span>
+  <span class="chevron" [class.aperto]="open()" aria-hidden="true">▾</span>
+</div>
+
+@if (open()) {
+  <ul class="dropdown-menu" role="listbox" [id]="listboxId">
+    @for (opt of options(); track opt.value; let i = $index) {
+      <li
+        class="dropdown-option"
+        role="option"
+        [id]="optionId(i)"
+        [attr.aria-selected]="opt.value === value()"
+        [class.evidenziata]="i === evidenziato()"
+        (click)="scegli(i)"
+        (mouseenter)="evidenziato.set(i)"
+      >
+        {{ opt.label }}
+      </li>
+    }
+  </ul>
+}
