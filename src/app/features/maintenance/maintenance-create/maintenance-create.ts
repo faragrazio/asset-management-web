@@ -33,6 +33,12 @@ export class MaintenanceCreate implements OnInit {
     { value: Priority.Critical, label: 'Critical' },
   ];
 
+  // assetsAttivi è una lista di Asset; la tendina vuole {value, label}.
+  // value = id (quello che finisce nel form), label = nome mostrato.
+  readonly assetOptions = computed<DropdownOption[]>(() =>
+    this.assetsAttivi().map((a) => ({ value: a.id, label: a.name })),
+  );
+  
   // Data minima selezionabile = oggi, in formato yyyy-MM-dd per l'attributo min.
   readonly oggi = new Date().toISOString().split('T')[0];
 
