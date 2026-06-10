@@ -2,11 +2,11 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AssetService } from '../../../core/services/asset.service';
 import { Asset } from '../../../core/models/asset.model';
-
+import { Dropdown, DropdownOption } from '../../../shared/dropdown/dropdown';
 
 @Component({
   selector: 'app-asset-list',
-  imports: [RouterLink],
+  imports: [RouterLink, Dropdown],
   templateUrl: './asset-list.html',
   styleUrl: './asset-list.scss',
 })
@@ -21,7 +21,8 @@ export class AssetList implements OnInit {
   // Se è null, il dialog è CHIUSO. Se contiene un id, il dialog è APERTO per quell'asset. Un solo signal fa due lavori: aperto/chiuso + quale asset.
  readonly idDaEliminare = signal<number | null>(null);
 
- readonly categoriaSelezionata = signal<string>('');  // '' = mostra tutte
+// '' = mostra tutte. Tipo allineato al model del componente dropdown.
+  readonly categoriaSelezionata = signal<string | number | null>('');
 
 // La lista delle categorie esistenti per il menu a tendina.
 // Si ricalcola da solo quando 'assets' cambia.
@@ -30,6 +31,12 @@ readonly categorie = computed(() => {
   const senzaDuplicati = [...new Set(tutte)];          // Set toglie i doppioni
   return senzaDuplicati.sort();                        // ordino in alfabetico
 });
+
+// Le opzioni per la tendina: "Tutte" (valore '') + una voce per ogni categoria.
+readonly categorieOptions = computed<DropdownOption[]>(() => [
+  { value: '', label: 'Tutte' },
+  ...this.categorie().map((c) => ({ value: c, label: c })),
+]);
 
 // Gli asset da mostrare, filtrati. Si ricalcola da solo quando
 // cambia 'assets' OPPURE 'categoriaSelezionata'.
@@ -41,7 +48,6 @@ readonly assetsFiltrati = computed(() => {
   return this.assets().filter((a) => a.category === categoria);
 });
 
-readonly menuAperto = signal(false);   // la tendina è aperta?
 
 ngOnInit(): void {
   this.loadAssets();
@@ -86,23 +92,6 @@ confermaEliminazione(): void {
   });
 
   this.idDaEliminare.set(null); // chiudo il dialog
-}
-
-// Apre/chiude la tendina.
-apriChiudiMenu(): void {
-  // update() prende il valore attuale e restituisce quello nuovo: qui lo inverto.
-  this.menuAperto.update((aperto) => !aperto);
-}
-
-// Chiude e basta (usato dallo strato invisibile).
-chiudiMenu(): void {
-  this.menuAperto.set(false);
-}
-
-// L'utente sceglie una voce: imposto la categoria e chiudo il menu.
-scegliCategoria(categoria: string): void {
-  this.categoriaSelezionata.set(categoria);
-  this.menuAperto.set(false);
 }
 
 }

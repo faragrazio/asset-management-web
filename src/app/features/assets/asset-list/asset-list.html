@@ -7,35 +7,12 @@
 <div class="filtro">
   <span class="filtro-label">Categoria:</span>
 
-  <div class="dropdown">
-    <!-- bottone che apre/chiude e mostra la scelta corrente -->
-    <button type="button" class="dropdown-trigger" (click)="apriChiudiMenu()">
-      <span>{{ categoriaSelezionata() || 'Tutte' }}</span>
-      <span class="chevron" [class.aperto]="menuAperto()">▾</span>
-    </button>
-
-    @if (menuAperto()) {
-      <!-- strato invisibile: un click fuori chiude il menu (come il dialog) -->
-      <div class="dropdown-backdrop" (click)="chiudiMenu()"></div>
-
-      <!-- il pannello con le voci -->
-      <div class="dropdown-menu">
-        <button
-          type="button"
-          [class.attiva]="categoriaSelezionata() === ''"
-          (click)="scegliCategoria('')"
-        >Tutte</button>
-
-        @for (cat of categorie(); track cat) {
-          <button
-            type="button"
-            [class.attiva]="categoriaSelezionata() === cat"
-            (click)="scegliCategoria(cat)"
-          >{{ cat }}</button>
-        }
-      </div>
-    }
-  </div>
+  <app-dropdown
+    [options]="categorieOptions()"
+    [value]="categoriaSelezionata()"
+    (valueChange)="categoriaSelezionata.set($event)"
+    ariaLabel="Filtra per categoria"
+  />
 </div>
 
 @if (error()) {
