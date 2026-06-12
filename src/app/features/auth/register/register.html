@@ -35,27 +35,14 @@
     }
 
     <label>Ruolo</label>
-    <div class="dropdown">
-      <!-- trigger: mostra il ruolo corrente letto DAL FORM -->
-      <button type="button" class="dropdown-trigger" (click)="apriChiudiMenu()">
-        <span>{{ form.controls.role.value }}</span>
-        <span class="chevron" [class.aperto]="menuAperto()">▾</span>
-      </button>
-
-      @if (menuAperto()) {
-        <!-- strato invisibile: un click fuori chiude il menu -->
-        <div class="dropdown-backdrop" (click)="chiudiMenu()"></div>
-        <div class="dropdown-menu">
-          @for (ruolo of ruoli; track ruolo) {
-            <button
-              type="button"
-              [class.attiva]="form.controls.role.value === ruolo"
-              (click)="scegliRuolo(ruolo)"
-            >{{ ruolo }}</button>
-          }
-        </div>
-      }
-    </div>
+    <!-- la tendina ruolo ora è il componente condiviso: apertura, tastiera e
+         ARIA li gestisce lui. Il FormControl resta la fonte di verità del valore. -->
+    <app-dropdown
+      [options]="ruoliOptions"
+      [value]="form.controls.role.value"
+      (valueChange)="scegliRuolo($event)"
+      ariaLabel="Ruolo"
+    />
 
     @if (error()) {
       <p class="error">{{ error() }}</p>

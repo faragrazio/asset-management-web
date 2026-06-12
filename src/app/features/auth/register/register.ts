@@ -3,10 +3,11 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Dropdown, DropdownOption } from '../../../shared/dropdown/dropdown';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Dropdown],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })
@@ -28,20 +29,19 @@ export class Register {
     role: ['Admin', [Validators.required]],
   });
 
-  readonly ruoli = ['Admin', 'Technician', 'Viewer'];
-  readonly menuAperto = signal(false);
+  // Voci della tendina ruolo: value e label coincidono perché il backend
+  // si aspetta proprio queste stringhe ('Admin' | 'Technician' | 'Viewer').
+  readonly ruoliOptions: DropdownOption[] = [
+    { value: 'Admin', label: 'Admin' },
+    { value: 'Technician', label: 'Technician' },
+    { value: 'Viewer', label: 'Viewer' },
+  ];
 
-  apriChiudiMenu(): void {
-    this.menuAperto.update((aperto) => !aperto);
-  }
-
-  chiudiMenu(): void {
-    this.menuAperto.set(false);
-  }
-
-  scegliRuolo(ruolo: string): void {
-    this.form.controls.role.setValue(ruolo);
-    this.menuAperto.set(false);
+  // app-dropdown emette string | number | null, ma i nostri value sono stringhe:
+  // riallineo il FormControl, che resta la fonte di verità del valore.
+  // La chiusura del menu non mi riguarda più: la gestisce app-dropdown.
+  scegliRuolo(ruolo: string | number | null): void {
+    this.form.controls.role.setValue(String(ruolo));
   }
 
   submit(): void {
