@@ -2,7 +2,8 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { MaintenanceOrderService } from '../../../core/services/maintenance-order.service';
-import {MaintenanceOrder, OrderStatus, UpdateOrderStatusRequest,} from '../../../core/models/maintenance-order.model';
+import { MaintenanceOrder, OrderStatus, UpdateOrderStatusRequest } from '../../../core/models/maintenance-order.model';
+
 @Component({
   selector: 'app-maintenance-list',
   imports: [RouterLink, DatePipe], // DatePipe serve per formattare la data nel template
@@ -10,8 +11,10 @@ import {MaintenanceOrder, OrderStatus, UpdateOrderStatusRequest,} from '../../..
   styleUrl: './maintenance-list.scss',
 })
 export class MaintenanceList implements OnInit {
+  // --- Dependency injection ---
   private readonly orderService = inject(MaintenanceOrderService);
 
+  // --- Campi (stato del componente) ---
   readonly orders = signal<MaintenanceOrder[]>([]);
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
@@ -46,6 +49,13 @@ export class MaintenanceList implements OnInit {
 
   // Testo della textarea note nel dialog di completamento.
   readonly noteCompletamento = signal('');
+
+  // --- Lifecycle ---
+  ngOnInit(): void {
+    this.loadOrders();
+  }
+
+  // --- Metodi pubblici ---
 
   // Avvia: Pending → InProgress. Diretto, senza conferma.
   avvia(ordine: MaintenanceOrder): void {
@@ -92,34 +102,7 @@ export class MaintenanceList implements OnInit {
     this.azioneDaConfermare.set(null);
   }
 
-  // Chiamata comune al backend + ricarica della lista per riflettere il nuovo stato.
-  private cambiaStato(request: UpdateOrderStatusRequest): void {
-    this.error.set(null);
-    this.orderService.updateStatus(request).subscribe({
-      next: () => this.loadOrders(),
-      error: (err) => this.error.set(err.error?.error ?? 'Operazione non riuscita.'),
-    });
-  }
-
-  ngOnInit(): void {
-    this.loadOrders();
-  }
-
-  private loadOrders(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-    this.orderService.getAll().subscribe({
-      next: (data) => {
-        this.orders.set(data);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.error.set('Impossibile caricare gli ordini di manutenzione.');
-        this.isLoading.set(false);
-      },
-    });
-  }
-
+  // Apre/chiude la tendina del filtro-stato (fatta a mano).
   apriChiudiMenu(): void {
     this.menuAperto.update((aperto) => !aperto);
   }
@@ -142,5 +125,31 @@ export class MaintenanceList implements OnInit {
   // Stessa logica per la priorità: "badge prio-high" ecc.
   classePriorita(priorityName: string): string {
     return 'badge prio-' + priorityName.toLowerCase();
+  }
+
+  // --- Metodi privati (aiutanti interni) ---
+
+  // Chiamata comune al backend + ricarica della lista per riflettere il nuovo stato.
+  private cambiaStato(request: UpdateOrderStatusRequest): void {
+    this.error.set(null);
+    this.orderService.updateStatus(request).subscribe({
+      next: () => this.loadOrders(),
+      error: (err) => this.error.set(err.error?.error ?? 'Operazione non riuscita.'),
+    });
+  }
+
+  private loadOrders(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+    this.orderService.getAll().subscribe({
+      next: (data) => {
+        this.orders.set(data);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.error.set('Impossibile caricare gli ordini di manutenzione.');
+        this.isLoading.set(false);
+      },
+    });
   }
 }
