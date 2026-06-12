@@ -164,11 +164,6 @@ td button + button { margin-left: var(--space-2); }
 button.danger { background: var(--color-danger); }
 button.danger:hover { background: var(--color-danger-hover); }
 
-/* --- Accessibilità (pilastro 2026) --- */
-/* variante distruttiva: <button class="danger">Elimina</button> */
-button.danger { background: var(--color-danger); }
-button.danger:hover { background: var(--color-danger-hover); }
-
 /* --- Intestazione di pagina (condivisa tra liste e form) --- */
 /* Qui sta solo il COMUNE. Il gap e l'allineamento orizzontale
    variano tra form e liste, quindi restano nei singoli componenti. */
