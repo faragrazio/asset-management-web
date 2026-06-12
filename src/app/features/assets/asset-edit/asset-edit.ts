@@ -13,7 +13,7 @@ export class AssetEdit implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly assetService = inject(AssetService);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute); // per leggere l'id dall'URL
+  private readonly route = inject(ActivatedRoute);
 
   // Id dell'asset da modificare: lo leggo una volta e lo conservo per l'update.
   // Non è un signal: non cambia mai e nessun template lo osserva.
@@ -55,7 +55,7 @@ ngOnInit(): void {
       this.form.markAllAsTouched();
       return;
     }
-    // Ricostruisco l'oggetto UpdateAssetRequest: id (dall'URL) + i 3 campi del form.
+    // id dall'URL, non dal form
     const dati = this.form.getRawValue();
     this.assetService
       .update({

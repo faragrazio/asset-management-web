@@ -28,10 +28,7 @@ export class Register {
     role: ['Admin', [Validators.required]],
   });
 
-  // ruoli disponibili nella tendina custom
   readonly ruoli = ['Admin', 'Technician', 'Viewer'];
-
-  // stato della tendina (aperta/chiusa)
   readonly menuAperto = signal(false);
 
   apriChiudiMenu(): void {
@@ -42,7 +39,6 @@ export class Register {
     this.menuAperto.set(false);
   }
 
-  // l'utente sceglie un ruolo: lo scrivo NEL FORM e chiudo il menu
   scegliRuolo(ruolo: string): void {
     this.form.controls.role.setValue(ruolo);
     this.menuAperto.set(false);

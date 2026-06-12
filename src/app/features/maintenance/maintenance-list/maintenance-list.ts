@@ -11,16 +11,14 @@ import { MaintenanceOrder, OrderStatus, UpdateOrderStatusRequest } from '../../.
   styleUrl: './maintenance-list.scss',
 })
 export class MaintenanceList implements OnInit {
-  // --- Dependency injection ---
   private readonly orderService = inject(MaintenanceOrderService);
 
-  // --- Campi (stato del componente) ---
   readonly orders = signal<MaintenanceOrder[]>([]);
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
   readonly skeletonRows = [0, 1, 2, 3, 4]; // array fittizio: ripete la riga-scheletro
 
-  // Filtro per stato. '' = mostra tutti. Stesso schema della tendina categorie.
+  // '' = mostra tutti
   readonly statoSelezionato = signal<string>('');
   readonly menuAperto = signal(false);
 
@@ -28,7 +26,6 @@ export class MaintenanceList implements OnInit {
   // Uso i nomi esattamente come li restituisce il backend in statusName.
   readonly statiPossibili = ['Pending', 'InProgress', 'Completed', 'Cancelled'];
 
-  // Ordini filtrati: si ricalcola da solo quando cambia 'orders' o 'statoSelezionato'.
   readonly ordersFiltrati = computed(() => {
     const stato = this.statoSelezionato();
     if (!stato) {
@@ -47,28 +44,22 @@ export class MaintenanceList implements OnInit {
     tipo: 'completa' | 'annulla';
   } | null>(null);
 
-  // Testo della textarea note nel dialog di completamento.
   readonly noteCompletamento = signal('');
 
-  // --- Lifecycle ---
   ngOnInit(): void {
     this.loadOrders();
   }
-
-  // --- Metodi pubblici ---
 
   // Avvia: Pending → InProgress. Diretto, senza conferma.
   avvia(ordine: MaintenanceOrder): void {
     this.cambiaStato({ orderId: ordine.id, newStatus: OrderStatus.InProgress });
   }
 
-  // Apre il dialog per completare o annullare l'ordine.
   chiediConferma(ordine: MaintenanceOrder, tipo: 'completa' | 'annulla'): void {
     this.noteCompletamento.set(''); // azzero le note ogni volta che apro
     this.azioneDaConfermare.set({ ordine, tipo });
   }
 
-  // Chiude il dialog senza fare niente.
   annullaDialog(): void {
     this.azioneDaConfermare.set(null);
   }
@@ -78,7 +69,6 @@ export class MaintenanceList implements OnInit {
     this.noteCompletamento.set((event.target as HTMLTextAreaElement).value);
   }
 
-  // Conferma dal dialog: esegue completa o annulla in base al tipo salvato.
   conferma(): void {
     const azione = this.azioneDaConfermare();
     if (!azione) {
@@ -116,18 +106,14 @@ export class MaintenanceList implements OnInit {
     this.menuAperto.set(false);
   }
 
-  // Compone la classe del badge in base allo stato: "badge badge-pending" ecc.
-  // Includo "badge" qui dentro per evitare il conflitto tra classe statica e [class].
+  // "badge" incluso qui per evitare conflitto tra classe statica e binding [class]
   classeStato(statusName: string): string {
     return 'badge badge-' + statusName.toLowerCase();
   }
 
-  // Stessa logica per la priorità: "badge prio-high" ecc.
   classePriorita(priorityName: string): string {
     return 'badge prio-' + priorityName.toLowerCase();
   }
-
-  // --- Metodi privati (aiutanti interni) ---
 
   // Chiamata comune al backend + ricarica della lista per riflettere il nuovo stato.
   private cambiaStato(request: UpdateOrderStatusRequest): void {

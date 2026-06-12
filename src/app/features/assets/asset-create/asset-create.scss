@@ -1,13 +1,4 @@
-/* Pagina-form: colonna stretta centrata nella pagina */
-.form-page {
-  max-width: 460px;
-  margin: 0 auto;
-}
-
-/* Intestazione: freccia di ritorno + titolo sulla stessa riga */
+/* Solo la differenza rispetto al globale: il gap delle pagine-form */
 .page-header {
-  display: flex;
-  align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-6);
 }

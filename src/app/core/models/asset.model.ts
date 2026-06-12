@@ -5,7 +5,6 @@ export enum AssetStatus {
   Decommissioned = 3,
 }
 
-// Asset restituito da GET /api/assets
 export interface Asset {
   id: number;
   name: string;
@@ -19,7 +18,6 @@ export interface Asset {
   updatedAt: string;
 }
 
-// POST /api/assets
 export interface CreateAssetRequest {
   name: string;
   serialNumber: string;

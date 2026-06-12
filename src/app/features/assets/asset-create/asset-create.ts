@@ -32,7 +32,6 @@ export class AssetCreate {
     }
     this.assetService.create(this.form.getRawValue()).subscribe({
       next: () => {
-        // Salvataggio riuscito: torniamo alla lista
         this.router.navigate(['/assets']);
       },
       error: () => {

@@ -12,7 +12,6 @@ export enum OrderStatus {
   Cancelled = 4,
 }
 
-// Ordine restituito da GET /api/maintenanceorders
 export interface MaintenanceOrder {
   id: number;
   assetId: number;
@@ -30,7 +29,6 @@ export interface MaintenanceOrder {
   createdAt: string;
 }
 
-// POST /api/maintenanceorders
 export interface CreateOrderRequest {
   assetId: number;
   title: string;

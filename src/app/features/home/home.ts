@@ -16,12 +16,10 @@ export class Home {
 
   readonly user = this.auth.user;
 
-  // Sorgente dei dati: l'intero elenco asset (null = non ancora caricato)
+  // null = dati non ancora arrivati; la UI mostra lo skeleton
   private readonly assets = signal<Asset[] | null>(null);
   readonly error = signal<string | null>(null);
 
-  // Metriche DERIVATE: si ricalcolano da sole quando "assets" cambia.
-  // Restituiscono null finché i dati non arrivano, così la UI mostra lo skeleton.
   readonly totale = computed(() => this.assets()?.length ?? null);
 
   readonly categorie = computed(() => {
@@ -34,7 +32,6 @@ export class Home {
   readonly inManutenzione = computed(() => {
     const lista = this.assets();
     if (lista === null) return null;
-    // tengo solo gli asset il cui stato è "in manutenzione" e li conto
     return lista.filter((a) => a.status === AssetStatus.InMaintenance).length;
   });
 
