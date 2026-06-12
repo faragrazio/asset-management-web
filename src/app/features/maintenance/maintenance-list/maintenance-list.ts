@@ -6,7 +6,8 @@ import { MaintenanceOrder, OrderStatus, UpdateOrderStatusRequest } from '../../.
 import { Dropdown, DropdownOption } from '../../../shared/dropdown/dropdown';
 @Component({
   selector: 'app-maintenance-list',
-  imports: [RouterLink, DatePipe, Dropdown], // DatePipe per la data, Dropdown per il filtro stato  templateUrl: './maintenance-list.html',
+  imports: [RouterLink, DatePipe, Dropdown], // DatePipe per la data, Dropdown per il filtro stato
+  templateUrl: './maintenance-list.html',
   styleUrl: './maintenance-list.scss',
 })
 export class MaintenanceList implements OnInit {
