@@ -5,32 +5,15 @@
 
 <div class="filtro">
   <span class="filtro-label">Stato:</span>
+    <div class="filtro">
+    <span class="filtro-label">Stato:</span>
 
-  <div class="dropdown">
-    <button type="button" class="dropdown-trigger" (click)="apriChiudiMenu()">
-      <span>{{ statoSelezionato() || 'Tutti' }}</span>
-      <span class="chevron" [class.aperto]="menuAperto()">▾</span>
-    </button>
-
-    @if (menuAperto()) {
-      <div class="dropdown-backdrop" (click)="chiudiMenu()"></div>
-
-      <div class="dropdown-menu">
-        <button
-          type="button"
-          [class.attiva]="statoSelezionato() === ''"
-          (click)="scegliStato('')"
-        >Tutti</button>
-
-        @for (stato of statiPossibili; track stato) {
-          <button
-            type="button"
-            [class.attiva]="statoSelezionato() === stato"
-            (click)="scegliStato(stato)"
-          >{{ stato }}</button>
-        }
-      </div>
-    }
+    <app-dropdown
+      [options]="statiOptions"
+      [value]="statoSelezionato()"
+      (valueChange)="statoSelezionato.set($event)"
+      ariaLabel="Filtra per stato"
+    />
   </div>
 </div>
 

@@ -3,11 +3,10 @@ import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { MaintenanceOrderService } from '../../../core/services/maintenance-order.service';
 import { MaintenanceOrder, OrderStatus, UpdateOrderStatusRequest } from '../../../core/models/maintenance-order.model';
-
+import { Dropdown, DropdownOption } from '../../../shared/dropdown/dropdown';
 @Component({
   selector: 'app-maintenance-list',
-  imports: [RouterLink, DatePipe], // DatePipe serve per formattare la data nel template
-  templateUrl: './maintenance-list.html',
+  imports: [RouterLink, DatePipe, Dropdown], // DatePipe per la data, Dropdown per il filtro stato  templateUrl: './maintenance-list.html',
   styleUrl: './maintenance-list.scss',
 })
 export class MaintenanceList implements OnInit {
@@ -18,13 +17,17 @@ export class MaintenanceList implements OnInit {
   readonly error = signal<string | null>(null);
   readonly skeletonRows = [0, 1, 2, 3, 4]; // array fittizio: ripete la riga-scheletro
 
-  // '' = mostra tutti
-  readonly statoSelezionato = signal<string>('');
-  readonly menuAperto = signal(false);
+// '' = nessun filtro (mostra tutti). Tipo allineato al model del Dropdown.
+  readonly statoSelezionato = signal<string | number | null>('');
 
-  // Gli stati sono fissi e noti (a differenza delle categorie, che nascono dai dati).
-  // Uso i nomi esattamente come li restituisce il backend in statusName.
-  readonly statiPossibili = ['Pending', 'InProgress', 'Completed', 'Cancelled'];
+  // Voci del filtro: la prima azzera il filtro. I value coincidono con statusName del backend.
+  readonly statiOptions: DropdownOption[] = [
+    { value: '', label: 'Tutti' },
+    { value: 'Pending', label: 'Pending' },
+    { value: 'InProgress', label: 'InProgress' },
+    { value: 'Completed', label: 'Completed' },
+    { value: 'Cancelled', label: 'Cancelled' },
+  ];
 
   readonly ordersFiltrati = computed(() => {
     const stato = this.statoSelezionato();
@@ -90,20 +93,6 @@ export class MaintenanceList implements OnInit {
     }
 
     this.azioneDaConfermare.set(null);
-  }
-
-  // Apre/chiude la tendina del filtro-stato (fatta a mano).
-  apriChiudiMenu(): void {
-    this.menuAperto.update((aperto) => !aperto);
-  }
-
-  chiudiMenu(): void {
-    this.menuAperto.set(false);
-  }
-
-  scegliStato(stato: string): void {
-    this.statoSelezionato.set(stato);
-    this.menuAperto.set(false);
   }
 
   // "badge" incluso qui per evitare conflitto tra classe statica e binding [class]
