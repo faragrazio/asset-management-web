@@ -169,6 +169,43 @@ button.danger:hover { background: var(--color-danger-hover); }
 button.danger { background: var(--color-danger); }
 button.danger:hover { background: var(--color-danger-hover); }
 
+/* --- Intestazione di pagina (condivisa tra liste e form) --- */
+/* Qui sta solo il COMUNE. Il gap e l'allineamento orizzontale
+   variano tra form e liste, quindi restano nei singoli componenti. */
+.page-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+.page-header h2 { margin: 0; }   /* nell'header il titolo non porta il margine globale */
+
+/* Freccia "torna indietro" delle pagine-form */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  transition: color var(--transition), border-color var(--transition);
+}
+.back-button:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Messaggio di errore sotto un campo non valido */
+.field-error {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
 /* --- Skeleton (segnaposto di caricamento) --- */
 .skeleton {
   display: block;                  /* su un <span> (inline) l'altezza verrebbe ignorata */

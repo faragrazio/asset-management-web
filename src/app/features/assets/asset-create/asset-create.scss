@@ -11,31 +11,3 @@
   gap: var(--space-3);
   margin-bottom: var(--space-6);
 }
-.page-header h2 { margin: 0; }   /* tolgo il margine sotto globale del titolo */
-
-/* Pulsante di ritorno: freccia compatta accanto al titolo */
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  font-size: 1.25rem;
-  line-height: 1;
-  color: var(--color-text-muted);
-  text-decoration: none;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  transition: color var(--transition), border-color var(--transition);
-}
-.back-button:hover {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-/* Messaggio di errore sotto un campo non valido */
-.field-error {
-  font-size: var(--text-sm);
-  color: var(--color-danger);
-}

@@ -4,48 +4,12 @@
   margin: 0 auto;
 }
 
-/* Intestazione: freccia di ritorno + titolo sulla stessa riga */
+/* Solo la differenza rispetto al globale: il gap delle pagine-form */
 .page-header {
-  display: flex;
-  align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-6);
-}
-.page-header h2 { margin: 0; }   /* tolgo il margine sotto globale del titolo */
-
-/* Pulsante di ritorno: freccia compatta accanto al titolo */
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  font-size: 1.25rem;
-  line-height: 1;
-  color: var(--color-text-muted);
-  text-decoration: none;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  transition: color var(--transition), border-color var(--transition);
-}
-.back-button:hover {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
 }
 
-/* Messaggio di errore sotto un campo non valido */
-.field-error {
-  font-size: var(--text-sm);
-  color: var(--color-danger);
-}
-
-/* la textarea può crescere in verticale ma non deformare la larghezza */
-textarea {
-  resize: vertical;
-}
-
-/* La textarea non ha lo stile globale che ha input: lo replico qui. */
+/* La textarea non eredita lo stile globale di input: lo replico qui. */
 textarea {
   width: 100%;
   padding: var(--space-3);
@@ -63,23 +27,3 @@ textarea:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(47, 91, 234, 0.15);
 }
-
-.register-container {
-  display: flex;
-  justify-content: center;   /* centra la card, come nel login */
-  padding-top: var(--space-8);
-}
-
-/* messaggio di errore sotto un campo non valido */
-.field-error {
-  font-size: var(--text-sm);
-  color: var(--color-danger);
-}
-
-/* riga "Hai già un account? Accedi" sotto il bottone */
-.auth-switch {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  text-align: center;
-}
-.auth-switch a { color: var(--color-primary); }

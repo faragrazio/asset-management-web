@@ -1,16 +1,8 @@
-/* Intestazione di pagina: titolo a sinistra, azione a destra, stessa riga */
+/* Intestazione di pagina. Il comune (display/align/margin e "h2 margin 0")
+   è nel globale: qui resta solo cosa cambia nelle liste. */
 .page-header {
-  display: flex;
-  align-items: center;             /* titolo e bottone allineati a metà altezza */
-  justify-content: space-between;  /* titolo a sx, bottone spinto a dx */
-  gap: var(--space-4);             /* respiro minimo se la riga si stringe */
-  margin-bottom: var(--space-6);   /* ora è l'header a staccare dalla toolbar */
-}
-
-/* dentro l'header il titolo NON deve avere il margine sotto globale,
-   altrimenti sballa l'allineamento verticale col bottone */
-.page-header h2 {
-  margin: 0;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 
 .actions {
