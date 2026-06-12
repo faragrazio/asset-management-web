@@ -14,7 +14,6 @@ export class App {
 
   protected readonly title = signal('asset-management-web');
 
-  // La navbar si mostra solo a utente loggato
   readonly isLoggedIn = this.auth.isLoggedIn;
 
   // Azione (non semplice link) → resta router.navigate

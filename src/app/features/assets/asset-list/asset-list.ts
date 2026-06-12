@@ -18,28 +18,23 @@ export class AssetList implements OnInit {
   readonly error = signal<string | null>(null);
   readonly skeletonRows = [0, 1, 2, 3, 4];  // array fittizio: ripete la riga-scheletro
 
-  // Se è null, il dialog è CHIUSO. Se contiene un id, il dialog è APERTO per quell'asset. Un solo signal fa due lavori: aperto/chiuso + quale asset.
- readonly idDaEliminare = signal<number | null>(null);
+  // null = dialog chiuso; un id = dialog aperto per quell'asset
+  readonly idDaEliminare = signal<number | null>(null);
 
-// '' = mostra tutte. Tipo allineato al model del componente dropdown.
+// '' = tutte; tipo string|number|null allineato al Dropdown model
   readonly categoriaSelezionata = signal<string | number | null>('');
 
-// La lista delle categorie esistenti per il menu a tendina.
-// Si ricalcola da solo quando 'assets' cambia.
 readonly categorie = computed(() => {
-  const tutte = this.assets().map((a) => a.category);  // prendo la categoria di ogni asset
-  const senzaDuplicati = [...new Set(tutte)];          // Set toglie i doppioni
-  return senzaDuplicati.sort();                        // ordino in alfabetico
+  const tutte = this.assets().map((a) => a.category);
+  const senzaDuplicati = [...new Set(tutte)];
+  return senzaDuplicati.sort();
 });
 
-// Le opzioni per la tendina: "Tutte" (valore '') + una voce per ogni categoria.
 readonly categorieOptions = computed<DropdownOption[]>(() => [
   { value: '', label: 'Tutte' },
   ...this.categorie().map((c) => ({ value: c, label: c })),
 ]);
 
-// Gli asset da mostrare, filtrati. Si ricalcola da solo quando
-// cambia 'assets' OPPURE 'categoriaSelezionata'.
 readonly assetsFiltrati = computed(() => {
   const categoria = this.categoriaSelezionata();
   if (!categoria) {
@@ -68,18 +63,15 @@ private loadAssets(): void {
   });
 }
 
-// Click su "Elimina" nella RIGA: non elimino, apro solo il dialog
-// salvando quale asset si vuole eliminare.
+// non elimina subito: apre il dialog e salva l'id
 chiediConferma(id: number): void {
   this.idDaEliminare.set(id);
 }
 
-// Click su "Annulla" nel DIALOG: chiudo senza fare niente.
 annullaEliminazione(): void {
   this.idDaEliminare.set(null);
 }
 
-// Click su "Elimina" nel DIALOG: eseguo davvero l'eliminazione.
 confermaEliminazione(): void {
   const id = this.idDaEliminare();
   if (id === null) {

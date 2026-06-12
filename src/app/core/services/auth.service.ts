@@ -37,7 +37,6 @@ export class AuthService {
     return this.currentUser()?.token ?? null;
   }
 
-  // Salva la sessione e aggiorna lo stato
   private setSession(response: AuthResponse): void {
     localStorage.setItem(this.storageKey, JSON.stringify(response));
     this.currentUser.set(response);

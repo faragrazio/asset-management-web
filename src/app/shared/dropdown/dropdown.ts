@@ -25,14 +25,12 @@ let prossimoId = 0;
   styleUrl: './dropdown.scss',
 })
 export class Dropdown {
-  // --- API pubblica (come la si usa da fuori) ---
   readonly options = input.required<DropdownOption[]>();
   readonly placeholder = input('Seleziona…');
   readonly ariaLabel = input('');
   // model = binding bidirezionale: il valore entra ed esce dal componente.
   readonly value = model<string | number | null>(null);
 
-  // --- stato interno ---
   readonly open = signal(false);
   readonly evidenziato = signal(0); // indice della voce evidenziata da tastiera/mouse
 
@@ -46,8 +44,6 @@ export class Dropdown {
   // mi serve per capire se un click/focus è dentro o fuori dal componente
   private readonly el = inject(ElementRef);
 
-  // Testo da mostrare nel trigger: cerco l'opzione col valore attuale,
-  // altrimenti mostro il placeholder.
   readonly labelCorrente = computed(() => {
     const corrente = this.value();
     return this.options().find((o) => o.value === corrente)?.label ?? this.placeholder();
@@ -58,7 +54,6 @@ export class Dropdown {
     this.open() ? this.optionId(this.evidenziato()) : null,
   );
 
-  // --- apertura / chiusura ---
   apri(): void {
     // all'apertura evidenzio la voce già scelta (o la prima se non c'è scelta)
     const sel = this.options().findIndex((o) => o.value === this.value());
@@ -72,7 +67,6 @@ export class Dropdown {
     this.open() ? this.chiudi() : this.apri();
   }
 
-  // --- scelta di una voce ---
   scegli(i: number): void {
     const opt = this.options()[i];
     if (!opt) return;
@@ -80,7 +74,7 @@ export class Dropdown {
     this.chiudi();
   }
 
-  // --- tastiera (gestita sul trigger, il focus resta lì) ---
+  // il focus non si sposta sulle voci: resta sul trigger
   onKeydown(e: KeyboardEvent): void {
     const ultimo = this.options().length - 1;
 
@@ -93,7 +87,6 @@ export class Dropdown {
       return;
     }
 
-    // Se è APERTA:
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
@@ -123,8 +116,7 @@ export class Dropdown {
     }
   }
 
-  // --- chiusura automatica ---
-  // click in un punto qualsiasi: se è FUORI dal componente, chiudo.
+  // click fuori dal componente: chiudo
   @HostListener('document:click', ['$event.target'])
   onClickFuori(target: EventTarget | null): void {
     if (this.open() && !this.el.nativeElement.contains(target)) {
