@@ -5,16 +5,13 @@
 
 <div class="filtro">
   <span class="filtro-label">Stato:</span>
-    <div class="filtro">
-    <span class="filtro-label">Stato:</span>
 
-    <app-dropdown
-      [options]="statiOptions"
-      [value]="statoSelezionato()"
-      (valueChange)="statoSelezionato.set($event)"
-      ariaLabel="Filtra per stato"
-    />
-  </div>
+  <app-dropdown
+    [options]="statiOptions"
+    [value]="statoSelezionato()"
+    (valueChange)="statoSelezionato.set($event)"
+    ariaLabel="Filtra per stato"
+  />
 </div>
 
 @if (error()) {
