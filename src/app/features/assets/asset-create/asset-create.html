@@ -1,55 +1,69 @@
 <div class="form-page">
   <header class="page-header">
     <a routerLink="/assets" class="back-button" aria-label="Torna agli asset">←</a>
-    <h2>Nuovo Asset</h2>
+    <h1>Nuovo asset</h1>
   </header>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form #formEl [formGroup]="form" (ngSubmit)="onSubmit(formEl)">
+    <p class="form-nota">Tutti i campi sono obbligatori.</p>
+
     <div>
-      <label>Nome</label>
-      <input type="text" formControlName="name" />
-      <!-- errore mostrato solo se il campo è invalido E l'utente l'ha già toccato -->
-      @if (form.controls.name.invalid && form.controls.name.touched) {
-        <p class="field-error">Il nome è obbligatorio.</p>
+      <label for="asset-nome">Nome</label>
+      <input id="asset-nome" type="text" formControlName="name" required
+        [attr.aria-invalid]="errore('name') ? 'true' : null"
+        [attr.aria-describedby]="errore('name') ? 'asset-nome-errore' : null" />
+      @if (errore('name')) {
+        <p id="asset-nome-errore" class="field-error">Il nome è obbligatorio.</p>
       }
     </div>
 
     <div>
-      <label>Numero di serie</label>
-      <input type="text" formControlName="serialNumber" />
-      @if (form.controls.serialNumber.invalid && form.controls.serialNumber.touched) {
-        <p class="field-error">Il numero di serie è obbligatorio.</p>
+      <label for="asset-seriale">Numero di serie</label>
+      <input id="asset-seriale" type="text" formControlName="serialNumber" required
+        [attr.aria-invalid]="errore('serialNumber') ? 'true' : null"
+        [attr.aria-describedby]="errore('serialNumber') ? 'asset-seriale-errore' : null" />
+      @if (errore('serialNumber')) {
+        <p id="asset-seriale-errore" class="field-error">Il numero di serie è obbligatorio.</p>
       }
     </div>
 
     <div>
-      <label>Categoria</label>
-      <input type="text" formControlName="category" />
-      @if (form.controls.category.invalid && form.controls.category.touched) {
-        <p class="field-error">La categoria è obbligatoria.</p>
+      <label for="asset-categoria">Categoria</label>
+      <input id="asset-categoria" type="text" formControlName="category" required
+        [attr.aria-invalid]="errore('category') ? 'true' : null"
+        [attr.aria-describedby]="errore('category') ? 'asset-categoria-errore' : null" />
+      @if (errore('category')) {
+        <p id="asset-categoria-errore" class="field-error">La categoria è obbligatoria.</p>
       }
     </div>
 
     <div>
-      <label>Posizione</label>
-      <input type="text" formControlName="location" />
-      @if (form.controls.location.invalid && form.controls.location.touched) {
-        <p class="field-error">La posizione è obbligatoria.</p>
+      <label for="asset-posizione">Posizione</label>
+      <input id="asset-posizione" type="text" formControlName="location" required
+        [attr.aria-invalid]="errore('location') ? 'true' : null"
+        [attr.aria-describedby]="errore('location') ? 'asset-posizione-errore' : null" />
+      @if (errore('location')) {
+        <p id="asset-posizione-errore" class="field-error">La posizione è obbligatoria.</p>
       }
     </div>
 
     <div>
-      <label>Data di acquisto</label>
-      <input type="date" formControlName="purchaseDate" />
-      @if (form.controls.purchaseDate.invalid && form.controls.purchaseDate.touched) {
-        <p class="field-error">La data di acquisto è obbligatoria.</p>
+      <label for="asset-data">Data di acquisto</label>
+      <input id="asset-data" type="date" formControlName="purchaseDate" required
+        [attr.aria-invalid]="errore('purchaseDate') ? 'true' : null"
+        [attr.aria-describedby]="errore('purchaseDate') ? 'asset-data-errore' : null" />
+      @if (errore('purchaseDate')) {
+        <p id="asset-data-errore" class="field-error">La data di acquisto è obbligatoria.</p>
       }
     </div>
 
     <button type="submit">Salva</button>
   </form>
 
-  @if (error()) {
-    <p>{{ error() }}</p>
-  }
+  <!-- role="alert": il messaggio viene letto appena compare, anche se il focus è altrove -->
+  <div role="alert">
+    @if (error()) {
+      <p class="field-error">{{ error() }}</p>
+    }
+  </div>
 </div>

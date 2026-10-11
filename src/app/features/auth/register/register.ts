@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { focusPrimoErrore } from '../../../shared/focus-primo-errore';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Dropdown, DropdownOption } from '../../../shared/dropdown/dropdown';
 
@@ -29,12 +30,12 @@ export class Register {
     role: ['Admin', [Validators.required]],
   });
 
-  // Voci della tendina ruolo: value e label coincidono perché il backend
-  // si aspetta proprio queste stringhe ('Admin' | 'Technician' | 'Viewer').
+  // Voci della tendina ruolo: il value è la stringa che il backend si aspetta
+  // ('Admin' | 'Technician' | 'Viewer'), la label è in italiano come il resto della pagina.
   readonly ruoliOptions: DropdownOption[] = [
-    { value: 'Admin', label: 'Admin' },
-    { value: 'Technician', label: 'Technician' },
-    { value: 'Viewer', label: 'Viewer' },
+    { value: 'Admin', label: 'Amministratore' },
+    { value: 'Technician', label: 'Tecnico' },
+    { value: 'Viewer', label: 'Sola lettura' },
   ];
 
   // app-dropdown emette string | number | null, ma i nostri value sono stringhe:
@@ -44,9 +45,16 @@ export class Register {
     this.form.controls.role.setValue(String(ruolo));
   }
 
-  submit(): void {
+  // true se il campo va segnalato come errato (non valido E già toccato)
+  errore(campo: keyof typeof this.form.controls): boolean {
+    const c = this.form.controls[campo];
+    return c.invalid && c.touched;
+  }
+
+  submit(formEl: HTMLElement): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      focusPrimoErrore(formEl);
       return;
     }
 

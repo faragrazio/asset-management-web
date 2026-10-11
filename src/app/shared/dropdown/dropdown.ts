@@ -28,6 +28,11 @@ export class Dropdown {
   readonly options = input.required<DropdownOption[]>();
   readonly placeholder = input('Seleziona…');
   readonly ariaLabel = input('');
+  // id di un'etichetta visibile già presente in pagina: se c'è, vince su ariaLabel
+  // (così il nome letto dallo screen reader coincide con il testo che si vede)
+  readonly ariaLabelledby = input('');
+  readonly ariaDescribedby = input('');
+  readonly invalido = input(false);
   // model = binding bidirezionale: il valore entra ed esce dal componente.
   readonly value = model<string | number | null>(null);
 

@@ -1,46 +1,60 @@
 <div class="form-page">
   <header class="page-header">
     <a routerLink="/assets" class="back-button" aria-label="Torna agli asset">←</a>
-    <h2>Modifica Asset</h2>
+    <h1>Modifica asset</h1>
   </header>
 
-  @if (error()) {
-    <p>{{ error() }}</p>
-  }
+  <div role="alert">
+    @if (error()) {
+      <p class="field-error">{{ error() }}</p>
+    }
+  </div>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <!-- annuncio per lo screen reader: lo scheletro grafico da solo non dice niente -->
+  <p class="sr-only" role="status">{{ isLoading() ? 'Caricamento dell\'asset in corso' : '' }}</p>
+
+  <form #formEl [formGroup]="form" (ngSubmit)="onSubmit(formEl)" [attr.aria-busy]="isLoading()">
     @if (isLoading()) {
-      <!-- scheletro: stessa card e stessi campi del form vero -->
-      @for (i of skeletonFields; track i) {
-        <div>
-          <span class="skeleton" style="width: 30%; height: 0.9rem;"></span>    <!-- etichetta -->
-          <span class="skeleton" style="width: 100%; height: 2.75rem;"></span>  <!-- input -->
-        </div>
-      }
-      <span class="skeleton" style="width: 150px; height: 2.75rem;"></span>      <!-- bottone -->
-    } 
-    @else {
+      <!-- scheletro: stessa card e stessi campi del form vero; nascosto agli screen reader -->
+      <div aria-hidden="true">
+        @for (i of skeletonFields; track i) {
+          <div class="skeleton-campo">
+            <span class="skeleton" style="width: 30%; height: 0.9rem;"></span>
+            <span class="skeleton" style="width: 100%; height: 2.75rem;"></span>
+          </div>
+        }
+        <span class="skeleton" style="width: 150px; height: 2.75rem;"></span>
+      </div>
+    } @else {
+      <p class="form-nota">Tutti i campi sono obbligatori.</p>
+
       <div>
-        <label>Nome</label>
-        <input type="text" formControlName="name" />
-        @if (form.controls.name.invalid && form.controls.name.touched) {
-          <p class="field-error">Il nome è obbligatorio.</p>
+        <label for="modifica-nome">Nome</label>
+        <input id="modifica-nome" type="text" formControlName="name" required
+          [attr.aria-invalid]="errore('name') ? 'true' : null"
+          [attr.aria-describedby]="errore('name') ? 'modifica-nome-errore' : null" />
+        @if (errore('name')) {
+          <p id="modifica-nome-errore" class="field-error">Il nome è obbligatorio.</p>
         }
       </div>
 
       <div>
-        <label>Categoria</label>
-        <input type="text" formControlName="category" />
-        @if (form.controls.category.invalid && form.controls.category.touched) {
-          <p class="field-error">La categoria è obbligatoria.</p>
+        <label for="modifica-categoria">Categoria</label>
+        <input id="modifica-categoria" type="text" formControlName="category" required
+          [attr.aria-invalid]="errore('category') ? 'true' : null"
+          [attr.aria-describedby]="errore('category') ? 'modifica-categoria-errore' : null" />
+        @if (errore('category')) {
+          <p id="modifica-categoria-errore" class="field-error">La categoria è obbligatoria.</p>
         }
       </div>
 
       <div>
-        <label>Posizione</label>
-        <input type="text" formControlName="location" />
-        @if (form.controls.location.invalid && form.controls.location.touched) {
-          <p class="field-error">La posizione è obbligatoria.</p>
+        <label for="modifica-posizione">Posizione</label>
+        <input id="modifica-posizione" type="text" formControlName="location" required
+          [attr.aria-invalid]="errore('location') ? 'true' : null"
+          [attr.aria-describedby]="errore('location') ? 'modifica-posizione-errore' : null" />
+        @if (errore('location')) {
+          <p id="modifica-posizione-errore" class="field-error">La posizione è obbligatoria.</p>
         }
       </div>
 

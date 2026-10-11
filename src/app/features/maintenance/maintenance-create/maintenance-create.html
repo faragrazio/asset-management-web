@@ -1,70 +1,86 @@
 <div class="form-page">
   <header class="page-header">
     <a routerLink="/maintenance" class="back-button" aria-label="Torna alle manutenzioni">←</a>
-    <h2>Nuovo ordine</h2>
+    <h1>Nuovo ordine</h1>
   </header>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form #formEl [formGroup]="form" (ngSubmit)="onSubmit(formEl)">
+    <p class="form-nota">Tutti i campi sono obbligatori.</p>
+
     <div>
-      <label>Asset</label>
+      <!-- la tendina non è un input nativo: l'etichetta si collega con aria-labelledby -->
+      <span id="ordine-asset-etichetta" class="etichetta">Asset</span>
       <app-dropdown
         [options]="assetOptions()"
         [value]="form.controls.assetId.value"
         (valueChange)="onAssetChange($event)"
         placeholder="Seleziona un asset…"
-        ariaLabel="Seleziona un asset"
+        ariaLabelledby="ordine-asset-etichetta"
+        [invalido]="errore('assetId')"
+        [ariaDescribedby]="errore('assetId') ? 'ordine-asset-errore' : ''"
       />
-      @if (form.controls.assetId.invalid && form.controls.assetId.touched) {
-        <p class="field-error">Seleziona un asset.</p>
+      @if (errore('assetId')) {
+        <p id="ordine-asset-errore" class="field-error">Seleziona un asset.</p>
       }
     </div>
 
     <div>
-      <label>Intervento</label>
-      <input type="text" formControlName="title" />
-      @if (form.controls.title.invalid && form.controls.title.touched) {
-        <p class="field-error">Il titolo è obbligatorio.</p>
+      <label for="ordine-titolo">Intervento</label>
+      <input id="ordine-titolo" type="text" formControlName="title" required
+        [attr.aria-invalid]="errore('title') ? 'true' : null"
+        [attr.aria-describedby]="errore('title') ? 'ordine-titolo-errore' : null" />
+      @if (errore('title')) {
+        <p id="ordine-titolo-errore" class="field-error">Il titolo è obbligatorio.</p>
       }
     </div>
 
     <div>
-      <label>Descrizione</label>
-      <textarea formControlName="description" rows="3"></textarea>
-      @if (form.controls.description.invalid && form.controls.description.touched) {
-        <p class="field-error">La descrizione è obbligatoria.</p>
+      <label for="ordine-descrizione">Descrizione</label>
+      <textarea id="ordine-descrizione" formControlName="description" rows="3" required
+        [attr.aria-invalid]="errore('description') ? 'true' : null"
+        [attr.aria-describedby]="errore('description') ? 'ordine-descrizione-errore' : null"></textarea>
+      @if (errore('description')) {
+        <p id="ordine-descrizione-errore" class="field-error">La descrizione è obbligatoria.</p>
       }
     </div>
 
     <div>
-      <label>Priorità</label>
+      <span id="ordine-priorita-etichetta" class="etichetta">Priorità</span>
       <app-dropdown
         [options]="priorita"
         [value]="form.controls.priority.value"
         (valueChange)="onPriorityChange($event)"
-        ariaLabel="Seleziona la priorità"
+        ariaLabelledby="ordine-priorita-etichetta"
       />
     </div>
 
     <div>
-      <label>Tecnico assegnato</label>
-      <input type="text" formControlName="assignedTo" />
-      @if (form.controls.assignedTo.invalid && form.controls.assignedTo.touched) {
-        <p class="field-error">Il tecnico assegnato è obbligatorio.</p>
+      <label for="ordine-tecnico">Tecnico assegnato</label>
+      <input id="ordine-tecnico" type="text" formControlName="assignedTo" required
+        autocomplete="off"
+        [attr.aria-invalid]="errore('assignedTo') ? 'true' : null"
+        [attr.aria-describedby]="errore('assignedTo') ? 'ordine-tecnico-errore' : null" />
+      @if (errore('assignedTo')) {
+        <p id="ordine-tecnico-errore" class="field-error">Il tecnico assegnato è obbligatorio.</p>
       }
     </div>
 
     <div>
-      <label>Data prevista</label>
-      <input type="date" formControlName="scheduledDate" [min]="oggi" />
-      @if (form.controls.scheduledDate.invalid && form.controls.scheduledDate.touched) {
-        <p class="field-error">La data prevista è obbligatoria.</p>
+      <label for="ordine-data">Data prevista</label>
+      <input id="ordine-data" type="date" formControlName="scheduledDate" [min]="oggi" required
+        [attr.aria-invalid]="errore('scheduledDate') ? 'true' : null"
+        [attr.aria-describedby]="errore('scheduledDate') ? 'ordine-data-errore' : null" />
+      @if (errore('scheduledDate')) {
+        <p id="ordine-data-errore" class="field-error">La data prevista è obbligatoria.</p>
       }
     </div>
 
     <button type="submit">Crea ordine</button>
   </form>
 
-  @if (error()) {
-    <p class="field-error">{{ error() }}</p>
-  }
+  <div role="alert">
+    @if (error()) {
+      <p class="field-error">{{ error() }}</p>
+    }
+  </div>
 </div>

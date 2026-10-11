@@ -6,6 +6,7 @@ import { AssetService } from '../../../core/services/asset.service';
 import { Asset, AssetStatus } from '../../../core/models/asset.model';
 import { Priority } from '../../../core/models/maintenance-order.model';
 import { Dropdown, DropdownOption } from '../../../shared/dropdown/dropdown';
+import { focusPrimoErrore } from '../../../shared/focus-primo-errore';
 
 @Component({
   selector: 'app-maintenance-create',
@@ -24,13 +25,12 @@ export class MaintenanceCreate implements OnInit {
   readonly assetsAttivi = signal<Asset[]>([]);
   readonly error = signal<string | null>(null);
 
-  // Priorità per la tendina. Etichette in inglese per restare coerente con i
-  // badge della lista (priorityName arriva in inglese dal backend).
+  // Priorità per la tendina, in italiano come i badge della lista.
   readonly priorita = [
-    { value: Priority.Low, label: 'Low' },
-    { value: Priority.Medium, label: 'Medium' },
-    { value: Priority.High, label: 'High' },
-    { value: Priority.Critical, label: 'Critical' },
+    { value: Priority.Low, label: 'Bassa' },
+    { value: Priority.Medium, label: 'Media' },
+    { value: Priority.High, label: 'Alta' },
+    { value: Priority.Critical, label: 'Critica' },
   ];
 
   // assetsAttivi è una lista di Asset; la tendina vuole {value, label}.
@@ -61,9 +61,16 @@ export class MaintenanceCreate implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  // true se il campo va segnalato come errato (non valido E già toccato)
+  errore(campo: keyof typeof this.form.controls): boolean {
+    const c = this.form.controls[campo];
+    return c.invalid && c.touched;
+  }
+
+  onSubmit(formEl: HTMLElement): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      focusPrimoErrore(formEl);
       return;
     }
     this.error.set(null);

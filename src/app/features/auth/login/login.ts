@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { focusPrimoErrore } from '../../../shared/focus-primo-errore';
 
 @Component({
   selector: 'app-login',
@@ -23,9 +24,16 @@ export class Login {
     password: ['', [Validators.required]],
   });
 
-  submit(): void {
+  // true se il campo va segnalato come errato (non valido E già toccato)
+  errore(campo: keyof typeof this.form.controls): boolean {
+    const c = this.form.controls[campo];
+    return c.invalid && c.touched;
+  }
+
+  submit(formEl: HTMLElement): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      focusPrimoErrore(formEl);
       return;
     }
 

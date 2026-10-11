@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AssetService } from '../../../core/services/asset.service';
+import { focusPrimoErrore } from '../../../shared/focus-primo-errore';
 
 @Component({
   selector: 'app-asset-edit',
@@ -49,10 +50,16 @@ ngOnInit(): void {
   });
 }
 
-  onSubmit(): void {
-    
+  // true se il campo va segnalato come errato (non valido E già toccato)
+  errore(campo: keyof typeof this.form.controls): boolean {
+    const c = this.form.controls[campo];
+    return c.invalid && c.touched;
+  }
+
+  onSubmit(formEl: HTMLElement): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      focusPrimoErrore(formEl);
       return;
     }
     // id dall'URL, non dal form
