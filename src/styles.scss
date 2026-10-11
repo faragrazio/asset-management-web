@@ -9,6 +9,7 @@
   --color-text: #16191f;
   --color-text-muted: #5b6470;
   --color-border: #e6e8ec;
+  --color-border-input: #7b8494; /* bordo dei campi: 3,77:1 sul bianco (WCAG 1.4.11 chiede 3:1) */
 
   /* Azione */
   --color-primary: #2f5bea;
@@ -105,7 +106,8 @@ form {
 /* Un "campo" può essere un <div> (form Asset) O una <label> che avvolge
    l'input (form di login). In entrambi i casi impila etichetta e input. */
 form > div,
-form > label {
+form > label,
+.skeleton-campo {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);            /* spazio tra etichetta e input */
@@ -115,8 +117,10 @@ form > label {
   color: var(--color-text-muted);
 }
 
-/* etichetta usata come elemento separato (nei form Asset) */
-label {
+/* etichetta usata come elemento separato (nei form Asset).
+   .etichetta: stesso aspetto per le tendine, che si collegano con aria-labelledby */
+label,
+.etichetta {
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-muted);
@@ -129,15 +133,20 @@ input {
   font-weight: 400;  /* l'input non eredita il grassetto dell'etichetta */
   color: var(--color-text);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-input);
   border-radius: var(--radius);
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
+/* il contorno di :focus-visible (in fondo al file) resta attivo: qui solo il bordo */
 input:focus {
-  outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(47, 91, 234, 0.15);
+}
+
+/* campo con errore: oltre al colore, un bordo più spesso */
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border: 2px solid var(--color-danger);
 }
 
 button {
@@ -167,7 +176,7 @@ button.danger:hover { background: var(--color-danger-hover); }
   align-items: center;
   margin-bottom: var(--space-6);
 }
-.page-header h2 { margin: 0; }   /* nell'header il titolo non porta il margine globale */
+.page-header h1 { margin: 0; }   /* nell'header il titolo non porta il margine globale */
 
 /* Freccia "torna indietro" delle pagine-form */
 .back-button {
@@ -252,16 +261,10 @@ button.danger:hover { background: var(--color-danger-hover); }
   color: var(--color-text-muted);
 }
 
-/* Dialog: il COMUNE va qui; la textarea di completamento resta in maintenance-list */
-.dialog-overlay {
-  position: fixed;
-  inset: 0;                              /* copre tutto lo schermo */
+/* Dialog: <dialog> nativo aperto con showModal().
+   Il velo scuro è lo pseudo-elemento ::backdrop. */
+dialog.dialog::backdrop {
   background: rgba(22, 25, 31, 0.45);    /* velo scuro sul contenuto sotto */
-  display: flex;
-  align-items: center;                   /* centra in verticale */
-  justify-content: center;               /* centra in orizzontale */
-  padding: var(--space-4);
-  z-index: 50;                           /* sta sopra a tutto il resto */
 }
 
 .dialog {
@@ -270,11 +273,13 @@ button.danger:hover { background: var(--color-danger-hover); }
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   padding: var(--space-6);
-  width: 100%;
+  width: calc(100% - 2 * var(--space-4));  /* margine dai bordi su schermi stretti */
   max-width: 420px;
+  color: var(--color-text);
 }
 
-.dialog h3 {
+.dialog h2 {
+  font-size: 1.125rem;
   font-family: var(--font-display);
   margin: 0 0 var(--space-3);
 }
@@ -337,4 +342,54 @@ button.danger:hover { background: var(--color-danger-hover); }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
   .skeleton::after { animation: none; }   /* ora è l'ultima regola → vince */
+}
+/* ===========================================================
+   ACCESSIBILITÀ
+   =========================================================== */
+
+/* Testo nascosto alla vista ma letto dagli screen reader */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Link "Salta al contenuto": invisibile finché non riceve il focus col Tab */
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 10;
+  padding: var(--space-2) var(--space-4);
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-primary);
+  border-radius: var(--radius);
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+}
+
+/* Contenitore che scorre in orizzontale: a 320 px scorre la tabella, non la pagina */
+.tabella-scroll {
+  position: relative;   /* contiene anche i testi .sr-only delle celle, che altrimenti allargano la pagina */
+  overflow-x: auto;
+  border-radius: var(--radius);
+}
+.tabella-scroll table {
+  min-width: 640px;
+}
+
+/* Istruzione sopra ai form */
+.form-nota {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }

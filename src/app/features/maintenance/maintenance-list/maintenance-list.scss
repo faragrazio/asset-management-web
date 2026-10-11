@@ -19,10 +19,10 @@
 .badge-pending    { background: #fef3c7; color: #92400e; } /* giallo: in attesa */
 .badge-inprogress { background: #dbeafe; color: #1e40af; } /* blu: in corso */
 .badge-completed  { background: #dcfce7; color: #166534; } /* verde: completato */
-.badge-cancelled  { background: #f3f4f6; color: #6b7280; } /* grigio: annullato */
+.badge-cancelled  { background: #f3f4f6; color: #4b5563; } /* grigio: annullato */
 
 /* Colori per PRIORITÀ — la gravità sale dal grigio al rosso */
-.prio-low      { background: #f3f4f6; color: #6b7280; }
+.prio-low      { background: #f3f4f6; color: #4b5563; } /* 6,87:1 (prima #6b7280: 4,39:1, sotto il 4,5:1) */
 .prio-medium   { background: #dbeafe; color: #1e40af; }
 .prio-high     { background: #ffedd5; color: #9a3412; }
 .prio-critical { background: #fee2e2; color: #991b1b; }
@@ -38,6 +38,12 @@
   color: var(--color-text-muted);
 }
 
+.campo-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 /* textarea del dialog di completamento */
 .dialog textarea {
   width: 100%;
@@ -46,12 +52,10 @@
   font: inherit;
   color: var(--color-text);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-input);
   border-radius: var(--radius);
   resize: vertical;
 }
 .dialog textarea:focus {
-  outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(47, 91, 234, 0.15);
 }
