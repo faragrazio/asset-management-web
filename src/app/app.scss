@@ -1,5 +1,6 @@
 .navbar {
   display: flex;
+  flex-wrap: wrap;      /* a 320 px le voci vanno a capo invece di allargare la pagina */
   align-items: center;
   gap: var(--space-6);
   padding: var(--space-3) var(--space-4);
@@ -17,6 +18,7 @@
 
 .links {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
   margin-right: auto;   /* spinge il logout a destra */
 }
@@ -36,10 +38,13 @@
   color: var(--color-text);
 }
 
-/* voce di menu della pagina corrente (grazie a routerLinkActive) */
+/* voce di menu della pagina corrente (grazie a routerLinkActive).
+   Oltre al colore, una sottolineatura: l'informazione non passa solo dal colore. */
 .links a.active {
   background: var(--color-bg);
   color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 /* logout: pulsante neutro, sovrascrive lo stile blu globale */
@@ -51,4 +56,10 @@
 .logout:hover {
   background: var(--color-bg);
   color: var(--color-text);
+}
+/* il titolo e il main ricevono il focus da codice: niente contorno
+   (non sono controlli, e lo screen reader legge comunque il titolo) */
+main:focus,
+main h1:focus {
+  outline: none;
 }

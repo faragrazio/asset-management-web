@@ -1,17 +1,21 @@
+<a class="skip-link" href="#contenuto" (click)="vaiAlContenuto($event)">Salta al contenuto</a>
+
 @if (isLoggedIn()) {
-  <nav class="navbar">
-    <span class="brand">AssetManagement</span>
+  <header>
+    <nav class="navbar" aria-label="Principale">
+      <span class="brand">AssetManagement</span>
 
-    <div class="links">
-      <a routerLink="/home" routerLinkActive="active">Home</a>
-      <a routerLink="/assets" routerLinkActive="active">Asset</a>
-      <a routerLink="/maintenance" routerLinkActive="active">Manutenzioni</a>
-    </div>
+      <div class="links">
+        <a routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a>
+        <a routerLink="/assets" routerLinkActive="active" ariaCurrentWhenActive="page">Asset</a>
+        <a routerLink="/maintenance" routerLinkActive="active" ariaCurrentWhenActive="page">Manutenzioni</a>
+      </div>
 
-    <button class="logout" (click)="logout()">Logout</button>
-  </nav>
+      <button type="button" class="logout" (click)="logout()">Esci</button>
+    </nav>
+  </header>
 }
 
-<main>
+<main id="contenuto" tabindex="-1">
   <router-outlet />
 </main>
