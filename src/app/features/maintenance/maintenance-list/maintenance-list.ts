@@ -4,9 +4,11 @@ import { DatePipe } from '@angular/common';
 import { MaintenanceOrderService } from '../../../core/services/maintenance-order.service';
 import { MaintenanceOrder, OrderStatus, UpdateOrderStatusRequest } from '../../../core/models/maintenance-order.model';
 import { Dropdown, DropdownOption } from '../../../shared/dropdown/dropdown';
+import { Dialog } from '../../../shared/dialog/dialog';
+import { ETICHETTE_PRIORITA, ETICHETTE_STATO_ORDINE, traduci } from '../../../shared/etichette';
 @Component({
   selector: 'app-maintenance-list',
-  imports: [RouterLink, DatePipe, Dropdown], // DatePipe per la data, Dropdown per il filtro stato
+  imports: [RouterLink, DatePipe, Dropdown, Dialog], // DatePipe per la data, Dropdown per il filtro stato
   templateUrl: './maintenance-list.html',
   styleUrl: './maintenance-list.scss',
 })
@@ -24,10 +26,10 @@ export class MaintenanceList implements OnInit {
   // Voci del filtro: la prima azzera il filtro. I value coincidono con statusName del backend.
   readonly statiOptions: DropdownOption[] = [
     { value: '', label: 'Tutti' },
-    { value: 'Pending', label: 'Pending' },
-    { value: 'InProgress', label: 'InProgress' },
-    { value: 'Completed', label: 'Completed' },
-    { value: 'Cancelled', label: 'Cancelled' },
+    { value: 'Pending', label: 'In attesa' },
+    { value: 'InProgress', label: 'In corso' },
+    { value: 'Completed', label: 'Completato' },
+    { value: 'Cancelled', label: 'Annullato' },
   ];
 
   readonly ordersFiltrati = computed(() => {
@@ -36,6 +38,18 @@ export class MaintenanceList implements OnInit {
       return this.orders(); // nessuno stato scelto → tutti
     }
     return this.orders().filter((o) => o.statusName === stato);
+  });
+
+  readonly stato = (s: string) => traduci(ETICHETTE_STATO_ORDINE, s);
+  readonly priorita = (p: string) => traduci(ETICHETTE_PRIORITA, p);
+
+  // esito dell'ultima azione, da annunciare allo screen reader (WCAG 4.1.3)
+  readonly esito = signal('');
+  readonly annuncio = computed(() => {
+    if (this.isLoading()) return 'Caricamento degli ordini in corso';
+    const n = this.ordersFiltrati().length;
+    const conteggio = n === 1 ? '1 ordine in elenco' : `${n} ordini in elenco`;
+    return this.esito() ? `${this.esito()} ${conteggio}` : conteggio;
   });
 
   // Espongo l'enum al template per i confronti di stato (order.status === OrderStatus.Pending).
@@ -56,7 +70,10 @@ export class MaintenanceList implements OnInit {
 
   // Avvia: Pending → InProgress. Diretto, senza conferma.
   avvia(ordine: MaintenanceOrder): void {
-    this.cambiaStato({ orderId: ordine.id, newStatus: OrderStatus.InProgress });
+    this.cambiaStato(
+      { orderId: ordine.id, newStatus: OrderStatus.InProgress },
+      `Intervento «${ordine.title}» avviato.`,
+    );
   }
 
   chiediConferma(ordine: MaintenanceOrder, tipo: 'completa' | 'annulla'): void {
@@ -80,17 +97,20 @@ export class MaintenanceList implements OnInit {
     }
 
     if (azione.tipo === 'completa') {
-      this.cambiaStato({
-        orderId: azione.ordine.id,
-        newStatus: OrderStatus.Completed,
-        // note vuote → undefined: il campo è facoltativo
-        completionNotes: this.noteCompletamento() || undefined,
-      });
+      this.cambiaStato(
+        {
+          orderId: azione.ordine.id,
+          newStatus: OrderStatus.Completed,
+          // note vuote → undefined: il campo è facoltativo
+          completionNotes: this.noteCompletamento() || undefined,
+        },
+        `Intervento «${azione.ordine.title}» completato.`,
+      );
     } else {
-      this.cambiaStato({
-        orderId: azione.ordine.id,
-        newStatus: OrderStatus.Cancelled,
-      });
+      this.cambiaStato(
+        { orderId: azione.ordine.id, newStatus: OrderStatus.Cancelled },
+        `Intervento «${azione.ordine.title}» annullato.`,
+      );
     }
 
     this.azioneDaConfermare.set(null);
@@ -106,21 +126,29 @@ export class MaintenanceList implements OnInit {
   }
 
   // Chiamata comune al backend + ricarica della lista per riflettere il nuovo stato.
-  private cambiaStato(request: UpdateOrderStatusRequest): void {
+  // Dopo il cambio di stato la riga si ridisegna e il pulsante premuto sparisce:
+  // porto il focus sul titolo e annuncio l'esito, così l'utente non resta "nel vuoto".
+  private cambiaStato(request: UpdateOrderStatusRequest, messaggio: string): void {
     this.error.set(null);
+    this.esito.set('');
     this.orderService.updateStatus(request).subscribe({
-      next: () => this.loadOrders(),
+      next: () =>
+        this.loadOrders(() => {
+          this.esito.set(messaggio);
+          setTimeout(() => document.querySelector<HTMLElement>('main h1')?.focus());
+        }),
       error: (err) => this.error.set(err.error?.error ?? 'Operazione non riuscita.'),
     });
   }
 
-  private loadOrders(): void {
+  private loadOrders(dopo?: () => void): void {
     this.isLoading.set(true);
     this.error.set(null);
     this.orderService.getAll().subscribe({
       next: (data) => {
         this.orders.set(data);
         this.isLoading.set(false);
+        dopo?.();
       },
       error: () => {
         this.error.set('Impossibile caricare gli ordini di manutenzione.');

@@ -1,73 +1,88 @@
 <header class="page-header">
-  <h2>Asset</h2>
+  <h1 tabindex="-1">Asset</h1>
   <a routerLink="/assets/new" class="btn-new">+ Nuovo asset</a>
 </header>
 
 <div class="filtro">
-  <span class="filtro-label">Categoria:</span>
+  <span id="filtro-categoria-etichetta" class="filtro-label">Categoria:</span>
 
   <app-dropdown
     [options]="categorieOptions()"
     [value]="categoriaSelezionata()"
     (valueChange)="categoriaSelezionata.set($event)"
-    ariaLabel="Filtra per categoria"
+    ariaLabelledby="filtro-categoria-etichetta"
   />
 </div>
 
-@if (error()) {
-  <p class="error">{{ error() }}</p>
-} @else {
-  <table>
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Categoria</th>
-        <th>Posizione</th>
-        <th>Stato</th>
-        <th>Azioni</th>
-      </tr>
-    </thead>
-    <tbody>
-      @if (isLoading()) {
-        <!-- righe-scheletro: stessa tabella, stesse colonne del contenuto vero -->
-        @for (i of skeletonRows; track i) {
-          <tr>
-            <td><span class="skeleton" style="width: 70%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 60%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 40%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 96px; height: 1rem;"></span></td>
-          </tr>
+<!-- letto quando cambia: caricamento, numero di risultati, esito delle azioni -->
+<p class="sr-only" role="status">{{ annuncio() }}</p>
+
+<div role="alert">
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+</div>
+
+@if (!error()) {
+  <!-- a 320 px scorre la tabella, non la pagina; tabindex="0" la rende scorrevole da tastiera -->
+  <div class="tabella-scroll" role="region" aria-labelledby="didascalia-asset" tabindex="0">
+    <table [attr.aria-busy]="isLoading()">
+      <caption id="didascalia-asset" class="sr-only">Elenco asset</caption>
+      <thead>
+        <tr>
+          <th scope="col">Nome</th>
+          <th scope="col">Categoria</th>
+          <th scope="col">Posizione</th>
+          <th scope="col">Stato</th>
+          <th scope="col">Azioni</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <!-- righe-scheletro: solo grafiche, nascoste agli screen reader -->
+          @for (i of skeletonRows; track i) {
+            <tr aria-hidden="true">
+              <td><span class="skeleton" style="width: 70%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 60%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 40%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 96px; height: 1rem;"></span></td>
+            </tr>
+          }
+        } @else {
+          @for (asset of assetsFiltrati(); track asset.id) {
+            <tr>
+              <td>{{ asset.name }}</td>
+              <td>{{ asset.category }}</td>
+              <td>{{ asset.location }}</td>
+              <td>{{ statoAsset(asset.statusName) }}</td>
+              <td>
+                <div class="actions">
+                  <!-- il nome accessibile comincia col testo visibile (WCAG 2.5.3)
+                       e aggiunge l'asset: "Modifica" da solo, ripetuto, non dice quale -->
+                  <a [routerLink]="['/assets', asset.id, 'edit']" class="btn-edit"
+                    [attr.aria-label]="'Modifica ' + asset.name">Modifica</a>
+                  <button type="button" class="danger" (click)="chiediConferma(asset.id)"
+                    [attr.aria-label]="'Elimina ' + asset.name">Elimina</button>
+                </div>
+              </td>
+            </tr>
+          }
         }
-      } @else {
-        @for (asset of assetsFiltrati(); track asset.id) {
-          <tr>
-            <td>{{ asset.name }}</td>
-            <td>{{ asset.category }}</td>
-            <td>{{ asset.location }}</td>
-            <td>{{ asset.statusName }}</td>
-            <td>
-              <div class="actions">
-                <a [routerLink]="['/assets', asset.id, 'edit']" class="btn-edit">Modifica</a>
-                <button class="danger" (click)="chiediConferma(asset.id)">Elimina</button>
-              </div>
-            </td>
-          </tr>
-        }
-      }
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
 }
 
 @if (idDaEliminare() !== null) {
-  <div class="dialog-overlay">
-    <div class="dialog">
-      <h3>Conferma eliminazione</h3>
-      <p>Sei sicuro di voler eliminare questo asset? L'operazione non è reversibile.</p>
-      <div class="dialog-actions">
-        <button class="secondary" (click)="annullaEliminazione()">Annulla</button>
-        <button class="danger" (click)="confermaEliminazione()">Elimina</button>
-      </div>
+  <app-dialog titolo="Conferma eliminazione" (chiudi)="annullaEliminazione()">
+    <p>
+      Sei sicuro di voler eliminare «{{ assetDaEliminare()?.name }}»? L'operazione non è reversibile.
+    </p>
+    <div class="dialog-actions">
+      <!-- primo pulsante = quello che riceve il focus: l'azione meno distruttiva -->
+      <button type="button" class="secondary" (click)="annullaEliminazione()">Annulla</button>
+      <button type="button" class="danger" (click)="confermaEliminazione()">Elimina</button>
     </div>
-  </div>
+  </app-dialog>
 }

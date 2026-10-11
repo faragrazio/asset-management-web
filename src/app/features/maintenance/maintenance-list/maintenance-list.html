@@ -1,105 +1,119 @@
 <header class="page-header">
-  <h2>Manutenzioni</h2>
+  <h1 tabindex="-1">Manutenzioni</h1>
   <a routerLink="/maintenance/new" class="btn-new">+ Nuovo ordine</a>
 </header>
 
 <div class="filtro">
-  <span class="filtro-label">Stato:</span>
+  <span id="filtro-stato-etichetta" class="filtro-label">Stato:</span>
 
   <app-dropdown
     [options]="statiOptions"
     [value]="statoSelezionato()"
     (valueChange)="statoSelezionato.set($event)"
-    ariaLabel="Filtra per stato"
+    ariaLabelledby="filtro-stato-etichetta"
   />
 </div>
 
-@if (error()) {
-  <p class="error">{{ error() }}</p>
-} 
-@else {
-  <table>
-    <thead>
-      <tr>
-        <th>Asset</th>
-        <th>Intervento</th>
-        <th>Priorità</th>
-        <th>Stato</th>
-        <th>Tecnico</th>
-        <th>Data prevista</th>
-        <th>Azioni</th>
-      </tr>
-    </thead>
-    <tbody>
-      @if (isLoading()) {
-        @for (i of skeletonRows; track i) {
-          <tr>
-            <td><span class="skeleton" style="width: 70%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 80%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 60%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
-            <td><span class="skeleton" style="width: 96px; height: 1rem;"></span></td>
-          </tr>
+<!-- letto quando cambia: caricamento, numero di risultati, esito delle azioni -->
+<p class="sr-only" role="status">{{ annuncio() }}</p>
+
+<div role="alert">
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+</div>
+
+@if (!error()) {
+  <div class="tabella-scroll" role="region" aria-labelledby="didascalia-ordini" tabindex="0">
+    <table [attr.aria-busy]="isLoading()">
+      <caption id="didascalia-ordini" class="sr-only">Ordini di manutenzione</caption>
+      <thead>
+        <tr>
+          <th scope="col">Asset</th>
+          <th scope="col">Intervento</th>
+          <th scope="col">Priorità</th>
+          <th scope="col">Stato</th>
+          <th scope="col">Tecnico</th>
+          <th scope="col">Data prevista</th>
+          <th scope="col">Azioni</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          @for (i of skeletonRows; track i) {
+            <tr aria-hidden="true">
+              <td><span class="skeleton" style="width: 70%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 80%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 60%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 50%; height: 1rem;"></span></td>
+              <td><span class="skeleton" style="width: 96px; height: 1rem;"></span></td>
+            </tr>
+          }
+        } @else {
+          @for (order of ordersFiltrati(); track order.id) {
+            <tr>
+              <td>{{ order.assetName }}</td>
+              <td>{{ order.title }}</td>
+              <td><span [class]="classePriorita(order.priorityName)">{{ priorita(order.priorityName) }}</span></td>
+              <td><span [class]="classeStato(order.statusName)">{{ stato(order.statusName) }}</span></td>
+              <td>{{ order.assignedTo }}</td>
+              <td>{{ order.scheduledDate | date: 'dd/MM/yyyy' }}</td>
+              <td>
+                <div class="actions">
+                  @if (order.status === OrderStatus.Pending) {
+                    <button type="button" class="btn-mini" (click)="avvia(order)"
+                      [attr.aria-label]="'Avvia ' + order.title">Avvia</button>
+                    <button type="button" class="btn-mini danger" (click)="chiediConferma(order, 'annulla')"
+                      [attr.aria-label]="'Annulla ' + order.title">Annulla</button>
+                  }
+                  @if (order.status === OrderStatus.InProgress) {
+                    <button type="button" class="btn-mini" (click)="chiediConferma(order, 'completa')"
+                      [attr.aria-label]="'Completa ' + order.title">Completa</button>
+                    <button type="button" class="btn-mini danger" (click)="chiediConferma(order, 'annulla')"
+                      [attr.aria-label]="'Annulla ' + order.title">Annulla</button>
+                  }
+                  @if (order.status === OrderStatus.Completed || order.status === OrderStatus.Cancelled) {
+                    <!-- il trattino si vede, ma lo screen reader sente una frase -->
+                    <span class="no-actions" aria-hidden="true">—</span>
+                    <span class="sr-only">Nessuna azione disponibile</span>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
         }
-      } 
-      @else {
-        @for (order of ordersFiltrati(); track order.id) {
-          <tr>
-            <td>{{ order.assetName }}</td>
-            <td>{{ order.title }}</td>
-            <td><span [class]="classePriorita(order.priorityName)">{{ order.priorityName }}</span></td>
-            <td><span [class]="classeStato(order.statusName)">{{ order.statusName }}</span></td>
-            <td>{{ order.assignedTo }}</td>
-            <td>{{ order.scheduledDate | date: 'dd/MM/yyyy' }}</td>
-            <td>
-              <div class="actions">
-                @if (order.status === OrderStatus.Pending) {
-                  <button class="btn-mini" (click)="avvia(order)">Avvia</button>
-                  <button class="btn-mini danger" (click)="chiediConferma(order, 'annulla')">Annulla</button>
-                }
-                @if (order.status === OrderStatus.InProgress) {
-                  <button class="btn-mini" (click)="chiediConferma(order, 'completa')">Completa</button>
-                  <button class="btn-mini danger" (click)="chiediConferma(order, 'annulla')">Annulla</button>
-                }
-                @if (order.status === OrderStatus.Completed || order.status === OrderStatus.Cancelled) {
-                  <span class="no-actions">—</span>
-                }
-              </div>
-            </td>
-          </tr>
-        }
-      }
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
 }
 
 @if (azioneDaConfermare(); as azione) {
-  <div class="dialog-overlay">
-    <div class="dialog">
-      @if (azione.tipo === 'completa') {
-        <h3>Completa ordine</h3>
-        <p>Stai completando l'intervento «{{ azione.ordine.title }}». Puoi aggiungere note di completamento (facoltative).</p>
+  @if (azione.tipo === 'completa') {
+    <app-dialog titolo="Completa ordine" (chiudi)="annullaDialog()">
+      <p>Stai completando l'intervento «{{ azione.ordine.title }}».</p>
+      <div class="campo-dialog">
+        <label for="note-completamento">Note di completamento (facoltative)</label>
         <textarea
+          id="note-completamento"
           rows="3"
-          placeholder="Note di completamento…"
           [value]="noteCompletamento()"
           (input)="aggiornaNote($event)"
         ></textarea>
-        <div class="dialog-actions">
-          <button class="secondary" (click)="annullaDialog()">Annulla</button>
-          <button (click)="conferma()">Completa</button>
-        </div>
-      } @else {
-        <h3>Annulla ordine</h3>
-        <p>Vuoi davvero annullare l'intervento «{{ azione.ordine.title }}»? L'operazione non è reversibile.</p>
-        <div class="dialog-actions">
-          <button class="secondary" (click)="annullaDialog()">Indietro</button>
-          <button class="danger" (click)="conferma()">Annulla ordine</button>
-        </div>
-      }
-    </div>
-  </div>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" (click)="annullaDialog()">Annulla</button>
+        <button type="button" (click)="conferma()">Completa</button>
+      </div>
+    </app-dialog>
+  } @else {
+    <app-dialog titolo="Annulla ordine" (chiudi)="annullaDialog()">
+      <p>Vuoi davvero annullare l'intervento «{{ azione.ordine.title }}»? L'operazione non è reversibile.</p>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" (click)="annullaDialog()">Indietro</button>
+        <button type="button" class="danger" (click)="conferma()">Annulla ordine</button>
+      </div>
+    </app-dialog>
+  }
 }
